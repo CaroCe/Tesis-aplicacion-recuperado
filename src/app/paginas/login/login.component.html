@@ -1,0 +1,125 @@
+<div class="example-loading-shade" *ngIf="isLoadingResults">
+  <div style="height: 220px;width: 200px;align-items: center;   justify-content: center;">
+    <div style="width: 200px;height: 180px;">
+      <img src="assets/logo-ff.png" width="200">
+    </div>
+    <div style="width: 200px; align-items: center;   justify-content: center;display: flex;">
+      <mat-spinner diameter="20" strokeWidth="10" color="accent"></mat-spinner>
+    </div>
+  </div>
+</div>
+<mat-grid-list [cols]="breakpoint" [rowHeight]="alturaFila" (window:resize)="onResize($event)"
+  style="background-image: url(assets/fondo_fisio.png);background-size: contain;">
+  <mat-grid-tile style="background-image: linear-gradient(#211966,#c7eb2686); opacity: 85%;">
+    <div style="width: 100%;">
+      <div [ngStyle]="{'text-align': alineacionLogo}" style="margin: 5%;font-size: x-small;color: white;opacity: 100%;">
+        <a href="http://floresfisioterapia.com/" target="_blank">
+          <img src="assets/logo-ff.png" width="250">
+        </a>
+        <br>
+        <a href="http://floresfisioterapia.com/" target="_blank" style="color: white;">
+          floresfisioterapia.com
+        </a>
+      </div>
+    </div>
+
+
+  </mat-grid-tile>
+  <mat-grid-tile [rowspan]="numeroFilas" style="background-color: white;">
+    <div [ngStyle]="{'text-align': 'left'}" style="width: 100%;">
+      <mat-card class="mat-elevation-z8 card" style="text-align: center;margin: 7%;padding: 4%;">
+        <mat-card-header>
+          <div style="width: 100%;">
+            <h2 style="text-align: left;">{{nombreEmpresa}}</h2>
+          </div>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="formLogin" *ngIf="loginForm">
+            <mat-form-field appearance="outline">
+              <mat-label>Correo electronico</mat-label>
+              <input matInput type="email" placeholder="ejemplo@mail.com" formControlName="email">
+              <mat-icon matSuffix>person</mat-icon>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Contraseña</mat-label>
+              <input matInput type="password" placeholder="**********" formControlName="password">
+              <mat-icon matSuffix>password</mat-icon>
+            </mat-form-field>
+          </form>
+          <form [formGroup]="formReg" *ngIf="!loginForm">
+            <mat-grid-list cols="2" rowHeight="80px">
+              <mat-grid-tile colspan="2">
+                <mat-form-field appearance="outline">
+                  <mat-label>Nombre completo</mat-label>
+                  <input matInput type="nombre" placeholder="" formControlName="nombre">
+                  <mat-icon matSuffix>person</mat-icon>
+                </mat-form-field>
+              </mat-grid-tile>
+              <mat-grid-tile colspan="1">
+                <mat-form-field appearance="outline">
+                  <mat-label>Cédula</mat-label>
+                  <input matInput type="nombre" placeholder="" formControlName="cedula">
+                  <mat-icon matSuffix>badge</mat-icon>
+                </mat-form-field>
+              </mat-grid-tile>
+              <mat-grid-tile colspan="1">
+                <mat-form-field appearance="outline">
+                  <mat-label>Fecha nacimiento</mat-label>
+                  <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento">
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+              </mat-grid-tile>
+              <mat-grid-tile colspan="2">
+                <mat-form-field appearance="outline">
+                  <mat-label>Teléfono</mat-label>
+                  <input matInput type="nombre" placeholder="" formControlName="telefono">
+                  <mat-icon matSuffix>call</mat-icon>
+                </mat-form-field>
+              </mat-grid-tile>
+              <mat-grid-tile colspan="2">
+                <mat-form-field appearance="outline">
+                  <mat-label>Domicilio</mat-label>
+                  <input matInput type="nombre" placeholder="" formControlName="domicilio">
+                  <mat-icon matSuffix>location_pin</mat-icon>
+                </mat-form-field>
+              </mat-grid-tile>
+              <mat-grid-tile colspan="2">
+                <mat-form-field appearance="outline">
+                  <mat-label>Correo electrónico</mat-label>
+                  <input matInput type="email" placeholder="" formControlName="email">
+                  <mat-icon matSuffix>email</mat-icon>
+                </mat-form-field>
+              </mat-grid-tile>
+              <mat-grid-tile colspan="1">
+                <mat-form-field appearance="outline">
+                  <mat-label>Contraseña</mat-label>
+                  <input matInput type="password" placeholder="**********" formControlName="password">
+                  <mat-icon matSuffix>password</mat-icon>
+                </mat-form-field>
+              </mat-grid-tile>
+              <mat-grid-tile colspan="1">
+                <mat-form-field appearance="outline">
+                  <mat-label>Confirmar Contraseña</mat-label>
+                  <input matInput type="confirmPassword" placeholder="**********" formControlName="password">
+                  <mat-icon matSuffix>password</mat-icon>
+                </mat-form-field>
+              </mat-grid-tile>
+            </mat-grid-list>
+          </form>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="login()"
+            *ngIf="loginForm">Ingresar</button>
+          <button mat-raised-button color="accent" (click)="reg()"
+            *ngIf="loginForm">Registro</button>
+          <button mat-raised-button color="accent" (click)="log()"
+            *ngIf="!loginForm">Ingreso</button>
+          <button mat-raised-button color="primary" (click)="registrar()"
+            *ngIf="!loginForm">Registrarse</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+  </mat-grid-tile>
+</mat-grid-list>

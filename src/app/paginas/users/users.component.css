@@ -1,0 +1,17 @@
+.mat-radio-button ~ .mat-radio-button {
+    margin-left: 16px;
+  }
+  .mat-form-field{
+    width: 100%;
+    margin: 5px;
+  }
+  table{
+    width: 100%;
+  }
+  .scroll{
+    height: 350px;
+    width:98%;
+    overflow-y:scroll;
+    overflow-x:none;
+    background-color: rgb(255, 255, 255);
+}

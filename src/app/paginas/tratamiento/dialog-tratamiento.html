@@ -1,0 +1,16 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Tratamiento</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-selection-list #shoes>
+            <mat-list-option *ngFor="let shoe of typesOfShoes" style="height: 90px;">
+                <h3>{{shoe}}</h3>
+                <h4>Este es un texto de ejemplo que describe la fase del tratamiento</h4>
+            </mat-list-option>
+        </mat-selection-list>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-raised-button color="primary">Aceptar</button>
+    </mat-card-actions>
+</mat-card>

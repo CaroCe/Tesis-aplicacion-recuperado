@@ -1,0 +1,15 @@
+.mat-form-field{
+    width: 95%;
+    margin: 5px;
+  }
+  .scroll{
+    height: 400px;
+    width:100%;
+    overflow-y:scroll;
+    overflow-x:none;
+    background-color: rgb(255, 255, 255);
+}
+.mat-form-field{
+  width: 100%;
+  margin: 5px;
+}

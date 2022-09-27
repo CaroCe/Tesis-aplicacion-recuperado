@@ -1,0 +1,74 @@
+<mat-sidenav-container style="background-color: white;">
+  <mat-sidenav  class="sidenav fondo" #drawer fixedInViewport="true"
+      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+      [mode]="(isHandset$ | async) ? 'over' : 'side'" opened>
+
+    <mat-toolbar id="title-toolbar">
+      <div style="width: 70%;"></div>
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Usuario">
+        <mat-icon style="opacity: 70%;">person_outline</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <div mat-menu-item style="width: 90%;text-align: center;">
+          <h3>{{userName}}</h3>
+        </div>
+        <div mat-menu-item style="width: 90%;text-align: left;">
+          <h4>{{userEmail}}</h4>
+        </div>
+        <button  mat-menu-item (click)="logout()">
+          <mat-icon color="primary">exit_to_app</mat-icon>
+          <span>Salir</span>
+        </button>
+      </mat-menu>
+  </mat-toolbar>
+  <div>
+    <div style="text-align: center;width: 100%;">
+      <h3 style="color: white;text-shadow: 10px;">{{userName}}</h3>
+    </div>
+    <div style="text-align: center;">
+      <img src="assets/logo-ff.png"  width="80%" routerLink="/formularios/proforma">
+    </div>
+    
+    <div *ngFor="let item of menuItems" style="width: 100%;">
+      <ng-container>
+        <div class="box">
+          <span class="item-title">{{item.nombre}}</span>
+        </div>
+        
+      </ng-container>
+      <div *ngFor="let subitem of item.subMenu">
+        <button mat-flat-button class="item-fondo" [routerLink]=subitem.url>
+          <mat-icon class="material-icons-outlined" style="margin-right: 10px;" >
+            {{subitem.icon}}
+          </mat-icon> {{subitem.nombre}}
+        </button>
+      </div>
+    </div>
+    
+  </div>
+  <div style="margin-bottom: 0%;height: 20%;">
+    
+  </div>
+  </mat-sidenav>
+  <mat-sidenav-content >
+    <mat-toolbar class="mat-elevation-z3">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()">
+        <mat-icon aria-label="Side nav toggle icon" 
+        color="primary">menu</mat-icon>
+      </button>
+      <span style="text-align: right; width: 100%;margin: 15px;">
+        {{nombre_empresa}}
+      </span>
+    </mat-toolbar>
+    <div style="height: 100%;">
+      <router-outlet></router-outlet>
+    </div>
+    
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+

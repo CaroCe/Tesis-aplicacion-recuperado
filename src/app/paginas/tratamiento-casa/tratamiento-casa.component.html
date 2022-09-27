@@ -1,0 +1,72 @@
+<mat-card class="mat-elevation-z8" style="margin: 10px;">
+    <mat-card-header>
+        <mat-card-title>Tratamiento en casa</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-grid-list cols="5" rowHeight="700">
+            <mat-grid-tile>
+                <div style="height: 100%;">
+                    <h3>Lunes</h3>
+                    <mat-divider></mat-divider>
+                    <button mat-raised-button color="accent">Ejercicio en casa 1
+                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
+                    </button>
+
+                    <button mat-raised-button color="accent">Ejercicio en casa 1
+                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
+                    </button>
+
+                    <button mat-raised-button color="accent">Ejercicio en casa 1
+                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
+                    </button>
+                </div>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <div style="height: 100%;">
+                    <h3>Martes</h3>
+                    <mat-divider></mat-divider>
+                    <button mat-raised-button color="accent">Ejercicio en casa 2
+                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
+                    </button>
+                    <button mat-raised-button color="accent">Ejercicio en casa 2
+                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
+                    </button>
+                    <button mat-raised-button color="accent" (click)="verEjercicio()">Ejercicio en casa 2
+                        <mat-checkbox checked="false"></mat-checkbox>
+                    </button>
+                </div>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <div style="height: 100%;">
+                    <h3>Miércoles</h3>
+                    <mat-divider></mat-divider>
+                    <button mat-raised-button color="accent">Ejercicio en casa 3
+                        <mat-checkbox></mat-checkbox>
+                    </button>
+                    <button mat-raised-button color="accent">Ejercicio en casa 3
+                        <mat-checkbox></mat-checkbox>
+                    </button>
+                </div>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <div style="height: 100%;">
+                    <h3>Jueves</h3>
+                    <mat-divider></mat-divider>
+                    <button mat-raised-button color="accent">Ejercicio en casa 4
+                        <mat-checkbox></mat-checkbox>
+                    </button>
+                    <button mat-raised-button color="accent">Ejercicio en casa 4
+                        <mat-checkbox></mat-checkbox>
+                    </button>
+                </div>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <div style="height: 100%;">
+                    <h3>Viernes</h3>
+                    <mat-divider></mat-divider>
+                    <button mat-raised-button color="primary">Cita</button>
+                </div>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </mat-card-content>
+</mat-card>

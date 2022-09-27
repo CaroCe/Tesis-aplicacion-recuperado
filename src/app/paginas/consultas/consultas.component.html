@@ -1,0 +1,175 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Nueva Consulta</mat-card-title>
+        <mat-form-field appearance="outline">
+            <mat-label>Nombre completo</mat-label>
+            <input matInput type="nombre" [formControl]="pacienteId" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-option *ngFor="let option of filteredOptions | async" [value]="option" (click)="crearConulta(option)">
+                {{option.usuarioNombre}}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-stepper #stepper>
+            <mat-step>
+                <ng-template matStepLabel>Problema de Salud</ng-template>
+                <mat-grid-list cols="2" rowHeight="90">
+                    <mat-grid-tile  *ngIf="pacId>0" colspan="2">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Problema</mat-label>
+                            <input matInput type="text" [formControl]="problema">
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile  *ngIf="pacId>0">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Motivo</mat-label>
+                            <input matInput type="text" [formControl]="motivo">
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile *ngIf="pacId>0">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Descripción</mat-label>
+                            <textarea matInput type="text" [formControl]="descripcion"></textarea>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile colspan="2" rowspan="5">
+                        <div style="width: 100%;height: 100%;">
+                            <mat-grid-list cols="5" rowHeight="50px">
+                                <mat-grid-tile colspan="4" rowspan="9">
+                                    <div style="height: 450px;width: 510px;">
+                                        <canvas #canvas>
+                                        </canvas>
+                                    </div>
+                                </mat-grid-tile>
+                                <mat-grid-tile *ngIf="pacId>0">
+                                    <button mat-raised-button color="warn" style="width: 90%;" (click)="borrarTodo()">Borrar</button>
+                                </mat-grid-tile>
+                                <mat-grid-tile *ngIf="pacId>0">
+                                    <button mat-raised-button color="primary" style="width: 90%;" (click)="guardarEsquema()">
+                                        <mat-icon>save</mat-icon>
+                                        Guardar
+                                    </button>
+                                </mat-grid-tile>
+                            </mat-grid-list>
+                        </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile colspan="2" *ngIf="pacId>0">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Descripción del dolor</mat-label>
+                            <textarea matInput type="text"  [formControl]="descripcionDolor"></textarea>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                </mat-grid-list>
+                <button mat-raised-button matStepperNext  *ngIf="pacId>0">Siguiente</button>
+            </mat-step>
+            <mat-step *ngIf="pacId>0">
+                <ng-template matStepLabel>Examinación y Diagnostico</ng-template>
+                <mat-grid-list cols="1" rowHeight="95">
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Observación</mat-label>
+                            <textarea matInput type="text" [formControl]="observacion"></textarea>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Inspección</mat-label>
+                            <textarea matInput type="text" [formControl]="inspeccion"></textarea>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile rowspan="4">
+                        <div style="height: 100%;width: 100%;">
+                            <mat-grid-list cols="4" rowHeight="90">
+                                <mat-grid-tile colspan="2">
+                                    <input type="file" accept="image/png, image/jpeg" #fileInput/>
+                                </mat-grid-tile>
+                                <mat-grid-tile>
+                                    <button mat-raised-button (click)="limpiarImagenes();" color="accent">Borrar imagenes</button>
+                                </mat-grid-tile>
+                                <mat-grid-tile>
+                                    <button mat-raised-button (click)="uploadFile();" color="primary">Subir</button>
+                                </mat-grid-tile>
+                                <mat-grid-tile rowspan="3" colspan="2">
+                                    <div class="scroll">
+                                        <mat-grid-list cols="2" rowHeight="200px">
+                                            <mat-grid-tile *ngFor="let item of listaArchivos">
+                                                <img [src]="item" height="200px">
+                                            </mat-grid-tile>
+                                          </mat-grid-list>
+                                    </div>
+                                </mat-grid-tile>
+                            </mat-grid-list>
+                        </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Diagnostico</mat-label>
+                            <textarea matInput type="text" [formControl]="diagnostico"></textarea>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                </mat-grid-list>
+                <button mat-raised-button matStepperNext color="primary" (click)="guardarConsulta()">Guardar</button>
+            </mat-step>
+            <mat-step *ngIf="consultaId>0">
+                <ng-template matStepLabel>Tratamiento</ng-template>
+                <div style="margin-bottom: 15px;">
+                    <button mat-raised-button color="accent" (click)="agregarFase()"><mat-icon>add</mat-icon>Agregar fase</button>
+                </div>
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;">
+
+                    <ng-container matColumnDef="fase">
+                      <th mat-header-cell *matHeaderCellDef> Fase </th>
+                      <td mat-cell *matCellDef="let element"> {{element.tratamientoFase}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="fechaInicio">
+                      <th mat-header-cell *matHeaderCellDef> Fecha inicio </th>
+                      <td mat-cell *matCellDef="let element"> {{element.tratamientoFechaInicio}} </td>
+                    </ng-container>
+                    
+                    <ng-container matColumnDef="id">
+                        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                        <td mat-cell *matCellDef="let element"> 
+                            <button mat-raised-button color="primary" >Editar</button> 
+                        </td>
+                      </ng-container>
+                  
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                  </table>
+            </mat-step>
+            <mat-step *ngIf="consultaId>0">
+                <ng-template matStepLabel>Evolución</ng-template>
+                <div style="margin-bottom: 15px;">
+                    <button mat-raised-button color="accent" (click)="agregarEvolucion()"><mat-icon>add</mat-icon>Agregar evolución</button>
+                </div>
+                <table mat-table [dataSource]="dataSourceEvolucion" class="mat-elevation-z8" style="width: 100%;">
+
+                    <ng-container matColumnDef="fecha">
+                      <th mat-header-cell *matHeaderCellDef> Fecha </th>
+                      <td mat-cell *matCellDef="let element"> {{element.fecha}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="descripcion">
+                      <th mat-header-cell *matHeaderCellDef> Descripción </th>
+                      <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+                    </ng-container>
+                
+                    <ng-container matColumnDef="id">
+                        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                        <td mat-cell *matCellDef="let element">
+                            <button mat-raised-button color="primary">Editar</button>
+                        </td>
+                      </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumnsEvolucion"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumnsEvolucion;"></tr>
+                  </table>
+            </mat-step>
+        </mat-stepper>
+        
+    </mat-card-content>
+    
+</mat-card>

@@ -1,0 +1,49 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Datos Sede</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <form action="" [formGroup]="sedeForm">
+            <mat-grid-list cols="2" rowHeight="39">
+                <mat-grid-tile colspan="2" rowspan="2">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nombre</mat-label>
+                        <input matInput formControlName="sedeNombre">
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile colspan="2" rowspan="2">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Teléfono</mat-label>
+                        <input matInput formControlName="sedeTelefono">
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile colspan="2" rowspan="3">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Ubicación</mat-label>
+                        <textarea matInput formControlName="sedeDireccion"></textarea>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile colspan="2" rowspan="3">
+                    <mat-slide-toggle class="example-margin" color="primary" formControlName="estado">
+                        Estado
+                      </mat-slide-toggle>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <h3>Hora inicio</h3>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <h3>Hora fin</h3>
+                </mat-grid-tile>
+                <mat-grid-tile rowspan="2">
+                    <input type="time" formControlName="horaInicio">
+                </mat-grid-tile>
+                <mat-grid-tile rowspan="2">
+                    <input type="time" formControlName="horaFin">
+                </mat-grid-tile>
+            </mat-grid-list>
+        </form>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="guardarSede()">Guardar</button>
+    </mat-card-actions>
+</mat-card>

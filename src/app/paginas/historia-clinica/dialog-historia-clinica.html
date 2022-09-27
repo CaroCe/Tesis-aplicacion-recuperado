@@ -1,0 +1,168 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Historia clínica</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-stepper linear #stepper>
+            <mat-step>
+                <ng-template matStepLabel>Datos paciente</ng-template>
+                <form [formGroup]="usuarioForm">
+                    <mat-grid-list cols="3" rowHeight="80px">
+                        <mat-grid-tile colspan="3">
+                            <div *ngIf="data.id==0">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Nombre completo</mat-label>
+                                    <input matInput type="nombre" [formControl]="myControl" [matAutocomplete]="auto">
+
+                                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option" (click)="completarDatosUsuario(option)">
+                                        {{option.usuarioNombre}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </div>
+                            <div *ngIf="data.id!==0">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Nombre completo</mat-label>
+                                    <input matInput type="nombre" formControlName="nombre" >
+
+                                </mat-form-field>
+                            </div>
+
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="1">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Cédula</mat-label>
+                                <input matInput formControlName="cedula">
+                                <mat-icon matSuffix>badge</mat-icon>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="1">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Fecha nacimiento</mat-label>
+                                <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento">
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="1">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Teléfono</mat-label>
+                                <input matInput type="nombre" formControlName="telefono">
+                                <mat-icon matSuffix>call</mat-icon>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="1">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Sede</mat-label>
+                                <mat-select [formControl]="sedeUsuario" >
+                                    <mat-option value="0" disabled="true" selected>Seleccione una sede</mat-option>
+                                    <mat-option *ngFor="let sede of listaSedes" [value]="sede.sedeId">{{sede.sedeNombre}} </mat-option>
+                                <!--  <mat-error *ngIf="usuarioForm.hasError('required')" ></mat-error>-->
+                                </mat-select>
+                                <mat-icon matSuffix>business</mat-icon>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="1">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Correo electrónico</mat-label>
+                                <input matInput type="email" formControlName="email" placeholder="ejemplo@mail.com">
+                                <mat-icon matSuffix>email</mat-icon>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="1">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Lateralidad</mat-label>
+                                <mat-select [formControl]="lateralidadUsuario" >
+                                    <mat-option value="0" disabled="true" selected>Seleccione una lateralidad</mat-option>
+                                    <mat-option *ngFor="let item of listaLateralidad" [value]="item.lateralidadId">{{item.lateralidadNombre}} </mat-option>
+                                <!--  <mat-error *ngIf="usuarioForm.hasError('required')" ></mat-error>-->
+                                </mat-select>
+                                <mat-icon matSuffix>pan_tool</mat-icon>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="1">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Profesión</mat-label>
+                                <input matInput type="nombre" formControlName="profesion">
+                                <mat-icon matSuffix>home_repair_service</mat-icon>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="1">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Ocupacion</mat-label>
+                                <input matInput type="nombre" formControlName="ocupacion">
+                                <mat-icon matSuffix>engineering</mat-icon>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="3">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Domicilio</mat-label>
+                                <input matInput type="nombre" formControlName="domicilio">
+                                <mat-icon matSuffix>location_pin</mat-icon>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                    </mat-grid-list>
+                    <button mat-raised-button color="primary" (click)="guardarDatosUsuario(stepper)">Guardar</button>
+                </form>
+                
+            </mat-step>
+            <mat-step >
+                <ng-template matStepLabel>Antecedentes</ng-template>
+                <div class="scroll"> 
+                    
+                    <form [formGroup]="historiaForm">
+                        <mat-grid-list cols="2" rowHeight="90px">
+                            <mat-grid-tile colspan="2">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Fuente del relato</mat-label>
+                                    <input matInput type="nombre" formControlName="historiaFuente">
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile colspan="2">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Antecedentes familiares</mat-label>
+                                    <textarea  matInput formControlName="historiaAntecedentes"></textarea>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile colspan="2">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Antecedentes patológicos personales (clínicos y traumatologicos)</mat-label>
+                                    <textarea  matInput formControlName="historiaPatologicos"></textarea>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile colspan="2">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Hábitos</mat-label>
+                                    <textarea  matInput formControlName="historiaHabitos"></textarea>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile colspan="2">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Vivienda</mat-label>
+                                    <textarea  matInput formControlName="historiaVivienda"></textarea>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile colspan="2">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Alergias</mat-label>
+                                    <input matInput formControlName="historiaAlergias">
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile colspan="2">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Actividad física/Deporte</mat-label>
+                                    <input matInput formControlName="historiaActFisica">
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                        <button mat-raised-button color="primary" (click)="guardarHistoria()">Guardar</button>
+                    </form>
+                </div>
+            </mat-step>
+          </mat-stepper>
+    </mat-card-content>
+        
+</mat-card>
+
+

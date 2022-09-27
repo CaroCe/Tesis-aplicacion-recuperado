@@ -1,0 +1,39 @@
+<mat-card class="mat-elevation-z8" style="margin: 10px;">
+    <mat-card-header>
+        <mat-card-title>Mis citas</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-grid-list cols="4" rowHeight="77">
+            <mat-grid-tile colspan="3">
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <button mat-raised-button color="accent">Nueva cita</button>
+            </mat-grid-tile>
+        </mat-grid-list>
+        <div style="height: 550px;width: 100%;">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;">
+                <ng-container matColumnDef="fecha">
+                  <th mat-header-cell *matHeaderCellDef> Fecha </th>
+                  <td mat-cell *matCellDef="let element"> {{element.fecha}} </td>
+                </ng-container>
+                <ng-container matColumnDef="estado">
+                  <th mat-header-cell *matHeaderCellDef> Estado </th>
+                  <td mat-cell *matCellDef="let element"> {{element.estado}} </td>
+                </ng-container>
+                <ng-container matColumnDef="observacion">
+                  <th mat-header-cell *matHeaderCellDef> Observación </th>
+                  <td mat-cell *matCellDef="let element"> {{element.observacion}} </td>
+                </ng-container>
+                <ng-container matColumnDef="accion">
+                  <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                  <td mat-cell *matCellDef="let element">
+                    <button mat-raised-button color="primary" style="margin-right: 10px;" *ngIf="element.estado == 'Pendiente'">Confirmar</button>
+                    <button mat-raised-button color="accent" *ngIf="element.estado == 'Pendiente'">Cancelar</button>
+                </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+        </div>
+    </mat-card-content>
+</mat-card>

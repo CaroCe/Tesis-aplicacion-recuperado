@@ -1,0 +1,96 @@
+<mat-card class="mat-elevation-z8" style="margin: 10px;">
+    <mat-card-header>
+        <mat-card-title>Agendar cita</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-grid-list cols="7" rowHeight="77">
+            <mat-grid-tile colspan="2">
+                <mat-form-field appearance="outline">
+                    <mat-label>Ingrese fecha de la cita</mat-label>
+                    <mat-date-range-input [rangePicker]="picker">
+                        <input matStartDate placeholder="Start date">
+                        <input matEndDate placeholder="End date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2">
+                <mat-form-field appearance="outline">
+                    <mat-label>Sede</mat-label>
+                    <mat-select>
+                        <mat-option value="0">Todas</mat-option>
+                        <mat-option value="1">Sur</mat-option>
+                        <mat-option value="2">Norte</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2">
+                <mat-form-field appearance="outline">
+                    <mat-label>Especialista</mat-label>
+                    <mat-select>
+                        <mat-option value="0">Todas</mat-option>
+                        <mat-option value="1">Sur</mat-option>
+                        <mat-option value="2">Norte</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <div style="width: 100%;height: 70%; text-align: center;">
+                    <button mat-raised-button color="accent">Ver horarios</button>
+                </div>
+            </mat-grid-tile>
+        </mat-grid-list>
+
+        <div style="width: 100%;height: 550px;">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;">
+
+                <ng-container matColumnDef="fecha1">
+                    <th mat-header-cell *matHeaderCellDef> {{fecha1}} </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-raised-button color="primary" style="width: 85%;" (click)="agendarCita()">
+                            {{element.fch1}}
+                        </button>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="fecha2">
+                    <th mat-header-cell *matHeaderCellDef> {{fecha2}} </th>
+                    <td mat-cell *matCellDef="let element"> 
+                        <button mat-raised-button color="primary" style="width: 85%;">
+                            {{element.fch2}}
+                        </button> </td>
+                </ng-container>
+
+                <ng-container matColumnDef="fecha3">
+                    <th mat-header-cell *matHeaderCellDef> {{fecha3}} </th>
+                    <td mat-cell *matCellDef="let element"> 
+                        <button mat-raised-button color="primary" style="width: 85%;">
+                            {{element.fch3}}
+                        </button> </td>
+                </ng-container>
+
+                <ng-container matColumnDef="fecha4">
+                    <th mat-header-cell *matHeaderCellDef> {{fecha4}}</th>
+                    <td mat-cell *matCellDef="let element"> 
+                        <button mat-raised-button color="primary" style="width: 85%;">
+                            {{element.fch4}}
+                        </button> </td>
+                </ng-container>
+
+                <ng-container matColumnDef="fecha5">
+                    <th mat-header-cell *matHeaderCellDef> {{fecha5}} </th>
+                    <td mat-cell *matCellDef="let element"> 
+                        <button mat-raised-button color="primary" style="width: 85%;">
+                            {{element.fch5}}
+                        </button></td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+
+
+    </mat-card-content>
+</mat-card>

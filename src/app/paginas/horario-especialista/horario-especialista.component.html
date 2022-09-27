@@ -1,0 +1,29 @@
+<mat-card class="mat-elevation-z8" style="margin: 10px;">
+    <mat-card-header>
+        <mat-card-title>Administración de horarios</mat-card-title>
+        <mat-card-subtitle>Agregar horarios disponibles para consulta</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-grid-list cols="7" rowHeight="400">
+            <mat-grid-tile *ngFor="let dia of horarioDias">
+                <div style="height: 100%;width: 100%;">
+                    <mat-list>
+                        <mat-list-item>
+                            <h2>{{dia.horarioNombre}}</h2>
+                        </mat-list-item>
+                        <mat-list-item *ngFor="let item of dia.horarioTrabajos" style="height: 70px;margin-bottom: 5px;">
+                            <button mat-raised-button color="accent" style="width: 100%;height: 100%;" (click)="editarHorario(item)">
+                                {{item.horarioTrabajoDesde}}
+                                <br>
+                                {{item.horarioTrabajoHasta}}
+                            </button><!--{{item.horarioTrabajo.horarioTrabajoHasta.split('-')[1]}}-->
+                        </mat-list-item>
+                        <mat-list-item>
+                            <button mat-raised-button color="primary" (click)="nuevoHorario(dia)">Agregar</button>
+                        </mat-list-item>
+                    </mat-list>
+                </div>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </mat-card-content>
+</mat-card>
