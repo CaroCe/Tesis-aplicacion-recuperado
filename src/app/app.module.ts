@@ -37,6 +37,7 @@ import { DialogConsultaEvaluacionComponent } from './paginas/consultas/dialog-co
 import { DialogEditarEvolucionComponent } from './paginas/consultas/dialog-editar-evolucion/dialog-editar-evolucion.component';
 import { DialogGeneralErrorComponent } from './paginas/dialog-general-error/dialog-general-error.component';
 import { DialogLoginForoComponent } from './paginas/foro/dialog-login-foro/dialog-login-foro.component';
+import { AgendarCitaAdminComponent, DialogAgendarCitaAdmin } from './paginas/citas/agendar-cita-admin/agendar-cita-admin.component';
 
 
 @NgModule({
@@ -82,7 +83,9 @@ import { DialogLoginForoComponent } from './paginas/foro/dialog-login-foro/dialo
     DialogForo,
     SafePipe,
     DialogForoFase,
-    DialogLoginForoComponent
+    DialogLoginForoComponent,
+    AgendarCitaAdminComponent,
+    DialogAgendarCitaAdmin
   ],
   imports: [
     BrowserModule,

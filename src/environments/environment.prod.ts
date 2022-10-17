@@ -1,3 +1,6 @@
 export const environment = {
-  production: true
+  production: true,
+  apiUrl: 'http://backendfisioflores.fsdev.link/',
+  tituloApp:'Flores Fisioterapia',
+  logoName:''
 };

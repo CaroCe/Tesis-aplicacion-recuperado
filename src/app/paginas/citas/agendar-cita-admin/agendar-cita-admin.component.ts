@@ -36,9 +36,9 @@ export class FiveDayRangeSelectionStrategy<D> implements MatDateRangeSelectionSt
   }
 }
 @Component({
-  selector: 'app-agendar-cita',
-  templateUrl: './agendar-cita.component.html',
-  styleUrls: ['./agendar-cita.component.css'],
+  selector: 'app-agendar-cita-admin',
+  templateUrl: './agendar-cita-admin.component.html',
+  styleUrls: ['./agendar-cita-admin.component.css'],
   providers: [
     {
       provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
@@ -46,18 +46,20 @@ export class FiveDayRangeSelectionStrategy<D> implements MatDateRangeSelectionSt
     },
   ],
 })
-export class AgendarCitaComponent implements OnInit {
+export class AgendarCitaAdminComponent implements OnInit {
   displayedColumns: string[] = ['fecha1', 'fecha2', 'fecha3', 'fecha4', 'fecha5'];
   dataSource:HorarioDisponibleCita[] = [];
   listaSedes: Sede[] = [];
   listaEspecialistas: Usuario[] = [];
+  listaPacientes: Usuario[] = [];
   filtroForm: FormGroup;
   constructor(private dialog:MatDialog,private fb: FormBuilder,private _httpCitas:CitasService,private _httpEspecialistaService: EspecialistaService, private _httpSedeService: SedesService) {
     this.filtroForm = fb.group({
       fechaDesde: new FormControl(Date.now()),
       fechaHasta: new FormControl(Date.now()),
       sedeId: new FormControl(0),
-      especialistaId:new FormControl(0)
+      especialistaId:new FormControl(0),
+      pacienteId: new FormControl(0)
     })
     
     _httpSedeService.getSedes().subscribe(resp => {
@@ -66,27 +68,36 @@ export class AgendarCitaComponent implements OnInit {
     _httpEspecialistaService.getEspecialistas().subscribe(esp=>{
       this.listaEspecialistas = esp;
     });
+    _httpEspecialistaService.getPacientes().subscribe(pas=>{
+      this.listaPacientes = pas;
+    });
   }
 
   ngOnInit(): void {
   }
   buscar(){
-    let filtro: FiltroCitas ={
-      sedeId: this.filtroForm.value.sedeId,
-      especialistaId: this.filtroForm.value.especialistaId,
-      fechaDesde: this.filtroForm.value.fechaDesde,
-      fechaHasta: this.filtroForm.value.fechaHasta
+    if(this.filtroForm.value.pacienteId > 0){
+      let filtro: FiltroCitas ={
+        sedeId: this.filtroForm.value.sedeId,
+        especialistaId: this.filtroForm.value.especialistaId,
+        fechaDesde: this.filtroForm.value.fechaDesde,
+        fechaHasta: this.filtroForm.value.fechaHasta
+      }
+      this._httpCitas.getHorariosDisponibles(filtro).subscribe(c=>{
+        this.dataSource = c;
+      });
     }
-    this._httpCitas.getHorariosDisponibles(filtro).subscribe(c=>{
-      this.dataSource = c;
-    });
+    else{
+      alert("Seleccione un paciente");
+    }
+    
   }
 
   agendarCita(dia:HorarioDisponibleCita,hora:HorarioCita){
-    const dialogRef = this.dialog.open(DialogAgendarCita, {
+    const dialogRef = this.dialog.open(DialogAgendarCitaAdmin, {
       width: '400px',
       data: {
-        diaId:dia.horarioDiaId,hora:hora.horaCita,fecha:dia.horarioDiaFecha
+        diaId:dia.horarioDiaId,hora:hora.horaCita,fecha:dia.horarioDiaFecha,pacienteId:this.filtroForm.value.pacienteId
       }
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -97,12 +108,12 @@ export class AgendarCitaComponent implements OnInit {
 }
 
 @Component({
-  selector: 'dialog-agendar-cita',
-  templateUrl: 'dialog-agendar-cita.html'
+  selector: 'dialog-agendar-cita-admin',
+  templateUrl: 'dialog-agendar-cita-admin.html'
 })
-export class DialogAgendarCita {
+export class DialogAgendarCitaAdmin {
   observacion = new FormControl();
-  constructor(public dialogRef: MatDialogRef<DialogAgendarCita>,
+  constructor(public dialogRef: MatDialogRef<DialogAgendarCitaAdmin>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private formBuilder: FormBuilder,private dialog:MatDialog,private _httpCita:CitasService) {
 
@@ -114,7 +125,7 @@ export class DialogAgendarCita {
     let cita:CitaPost = {
       citaEstado:1,
       citaFecha:this.data.fecha,
-      usuarioId:Number(localStorage.getItem("userId")),
+      usuarioId:this.data.pacienteId,
       citaHora:this.data.hora,
       citaId:0
     }
@@ -123,7 +134,7 @@ export class DialogAgendarCita {
       const dialogRef = this.dialog.open(DialogGeneral, {
         width: '400px',
         data: {
-          mensaje:'Su turno a sido reservado y deberá confirmarlo 72 horas antes de su cita'
+          mensaje:'El turno a sido reservado y el paciente deberá confirmarlo 72 horas antes de su cita'
         }
       });
       dialogRef.afterClosed().subscribe(result => {

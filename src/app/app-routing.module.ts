@@ -4,6 +4,7 @@ import { AdminEjerciciosComponent } from './paginas/admin-ejercicios/admin-ejerc
 import { AdminForoComponent } from './paginas/admin-foro/admin-foro.component';
 import { AdminSedesComponent } from './paginas/admin-sedes/admin-sedes.component';
 import { AdministracionCitasComponent } from './paginas/citas/administracion-citas/administracion-citas.component';
+import { AgendarCitaAdminComponent } from './paginas/citas/agendar-cita-admin/agendar-cita-admin.component';
 import { AgendarCitaComponent } from './paginas/citas/agendar-cita/agendar-cita.component';
 import { MisCitasComponent } from './paginas/citas/mis-citas/mis-citas.component';
 import { BuscarConsultaComponent } from './paginas/consultas/buscar-consulta/buscar-consulta.component';
@@ -78,6 +79,10 @@ const routes: Routes = [{
         {
           path: 'agendar-cita',
           component: AgendarCitaComponent
+        },
+        {
+          path: 'agendar-cita-admin',
+          component: AgendarCitaAdminComponent
         },
       ]
     },
