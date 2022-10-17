@@ -1,0 +1,137 @@
+
+        <div id="divHtmlFisio" style="padding: 40px;width: 1000px;">
+            <div style="float:left;margin-bottom:30px;width:20%;text-align: center;">
+              <img id="logoTrading" src="assets/fisioblack.png" width="75%">
+            </div>
+            <div style="float: left;margin-bottom:100px;width:60%;text-align: center;margin-top: 30px;padding-right: 20%;">
+              <h1><strong>CENTRO DE REHABILITACIÓN "FLORES FISIOTERAPIA" <br>INFORME FISIOTERAPÉUTICO </strong> </h1>
+            </div>
+            <br>
+            <div style="width: 100%;margin-bottom: 10px;font-size:16px">
+              <strong >Datos de identificación del paciente</strong>
+            </div>
+            <div style="width: 100%;margin-bottom: 30px;">  
+              <table style="border: 2px solid grey;border-collapse: collapse;">
+                <tbody>
+                  <tr>
+                    <td style="border: 2px solid grey;padding:7px 5px;width: 150px;"><strong>Nombre:</strong> </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;width: 350px">{{datosHistoria.usuarioNombre}} </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;width: 100px;"><strong>C.I.:</strong> </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;width: 300px;">{{datosHistoria.usuarioIdentificacion}} </td>
+                  </tr>
+                  <tr>
+                    <td style="border: 2px solid grey;padding:7px 5px;"><strong>Fecha de Nacimiento:</strong> </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;">{{formatoFecha(datosHistoria.usuarioFechaNacimiento)}} </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;"><strong>Edad:</strong> </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;">{{calcularEdad(datosHistoria.usuarioFechaNacimiento)}} </td>
+                  </tr>
+                  <tr>
+                    <td style="border: 2px solid grey;padding:7px 5px;"><strong>Ocupación:</strong> </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;">{{datosHistoria.usuarioOcupacion}} </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;"><strong>Profesión:</strong> </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;">{{datosHistoria.usuarioProfesion}} </td>
+                  </tr>
+                  <tr>
+                    <td style="border: 2px solid grey;padding:7px 5px;"><strong>Lateralidad:</strong> </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;"></td>
+                    <td style="border: 2px solid grey;padding:7px 5px;"><strong>Teléfono:</strong> </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;">{{datosHistoria.usuarioTelefono}} </td>
+                  </tr>
+                  <tr>
+                    <td style="border: 2px solid grey;padding: 7px 5px;"><strong>Domicilio:</strong> </td>
+                    <td style="border: 2px solid grey;padding: 7px 5px;" colspan="3">{{datosHistoria.usuarioDireccion}} </td>
+                  </tr>
+          
+                </tbody>
+              </table>
+            </div>
+            <div>
+
+            </div>
+            <div style="margin-bottom: 10px;font-size:16px">
+              <strong >Problemas de salud</strong> {{data.consultaProblema}}
+            </div>
+            <div style="width: 100%;margin-bottom: 30px;">  
+              <table style="border: 2px solid grey;border-collapse: collapse;">
+                <tbody>
+                  <tr>
+                    <td style="border: 2px solid grey;padding:7px 5px;width: 250px;"><strong>Descripción:</strong> </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;width: 675px;">{{data.consultaDescripcion}} </td>
+                  </tr>
+                  <tr>
+                    <td style="border: 2px solid grey;padding:7px 5px;"><strong>Dolor:</strong> </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;">{{data.consultaMotivo}} </td>
+                  </tr>
+                  <tr>
+                    <td style="border: 2px solid grey;padding:7px 5px;"><strong>Examinación:</strong> </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;">{{data.examinacionInspeccion}} </td>
+                  </tr>
+                  <tr>
+                    <td style="border: 2px solid grey;padding:7px 5px;"><strong>Diagnóstico:</strong> </td>
+                    <td style="border: 2px solid grey;padding:7px 5px;" >{{data.diagnostico}} </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <div style="width: 900px;margin-bottom: 10px;font-size:16px;text-align: center;">
+                <strong >Tratamiento</strong>
+                <br>
+            </div>
+            <div style="width: 100%;margin-bottom: 30px;">  
+                <div *ngFor="let fase of datosTratamientos; let index=index">
+                    <div style="padding: 10px 0; font-size: 16px;width: 900px;">
+                         <strong>Fase {{fase.tratamientoFase}}:</strong> {{fase.tratamientoDescripcion}}
+                    </div>
+                   
+                    <table style="border: 2px solid grey;border-collapse: collapse;">
+                        <tbody>
+                            <tr>
+                                <td style="border: 2px solid grey;width: 100px;"><strong>Ejercicio</strong> </td>
+                                <td style="border: 2px solid grey;width: 100px"><strong>Repeticiones</strong> </td>
+                                <td style="border: 2px solid grey;width: 100px"><strong>Series</strong> </td>
+                                <td style="border: 2px solid grey;width: 100px"><strong>Descanso</strong> </td>
+                                <td style="border: 2px solid grey;width: 525px"><strong>Observación</strong> </td>
+                            </tr>
+                            <tr *ngFor="let dia of fase.tratamientosDia; let index=index">
+                                    <td style="border: 2px solid grey;">
+                                      <div style="border-bottom: 2px solid grey;padding:0 7px;height: 30px;" *ngFor="let ejercicio of dia?.ejercicioTratamientos">{{ejercicio.ejercicio?.ejercicioNombre}}</div>
+                                    </td>
+                                    <td style="border: 2px solid grey;">
+                                      <div style="border-bottom: 2px solid grey;padding:0 7px;height: 30px;text-align: center;" *ngFor="let ejercicio of dia?.ejercicioTratamientos">{{ejercicio.ejercicioTratamientoRepeticiones}}</div>
+                                    </td>
+                                    <td style="border: 2px solid grey;">
+                                      <div style="border-bottom: 2px solid grey;padding:0 7px;height: 30px;text-align: center;" *ngFor="let ejercicio of dia?.ejercicioTratamientos">{{ejercicio.ejercicioTratamientoSerie}}</div>
+                                    </td>
+                                    <td style="border: 2px solid grey;">
+                                      <div style="border-bottom: 2px solid grey;padding:0 7px;height: 30px;text-align: center;" *ngFor="let ejercicio of dia?.ejercicioTratamientos">{{ejercicio.ejercicioDescanso}}</div>
+                                    </td>
+                                    <td style="border: 2px solid grey;">
+                                      <div style="border-bottom: 2px solid grey;padding:0 7px;height: 30px;" *ngFor="let ejercicio of dia?.ejercicioTratamientos">{{ejercicio.ejercicioObservacion}}</div>
+                                    </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="padding: 10px 0;width: 900px;">
+                        <strong>Recomendaciones</strong><br>
+                        <p>{{fase.tratamientoRecomendacion}}</p>
+                    </div>
+                </div>
+            </div>
+        
+            <div style="width: 100%;margin-bottom: 30px;">  
+              <table style="border: 2px solid grey;border-collapse: collapse;">
+                <tbody>
+                    <tr><td colspan="3" style="text-align: center; padding: 7px 5px;"><strong>Evolución</strong> </td></tr>
+                    <tr>
+                        <td style="border: 2px solid grey;padding:7px 5px;width: 100px;"><strong>Fecha:</strong> </td>
+                        <td style="border: 2px solid grey;padding:7px 5px;width: 828px"><strong>Descripción</strong> </td>
+                    </tr>
+                    <tr *ngFor="let item of datosEvolucion; let index=index">
+                        <td style="border: 2px solid grey;padding:7px 5px;">{{item.evolucionFecha}}</td>
+                        <td style="border: 2px solid grey;padding:7px 5px;">{{item.evolucionDescripcion}}</td>
+                    </tr>
+                </tbody>
+              </table>
+            </div>
+        </div>

@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>Datos de Evolución</h2>
+<mat-dialog-content class="mat-typography lg" style="width: 450px;height: 600px;">
+    <div>
+        <form [formGroup]="formEvolucion">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Fecha</mat-label>
+                        <input matInput [matDatepicker]="picker"
+                        (dateInput)="inputFecha('input', $event)"
+                        (dateChange)="inputFecha('change', $event)"
+                        formControlName="fecha">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Descripción</mat-label>
+                        <textarea matInput type="text" formControlName="descripcion"></textarea>
+                    </mat-form-field>
+                        <mat-label>Agregar imagen</mat-label>
+                        <input type="file"  #fileInput accept="image/png, image/jpeg" multiple (change)="uploadFile();" />
+                 
+            <mat-grid-list cols="3" rowHeight="125px">
+                <div class="scroll">
+                    <mat-grid-tile *ngFor="let item of listaFotos">
+                        <img *ngIf="item.evolucionId===data.evolucionId" [src]="item.fotoEvolucionImagen" width="50%">
+                    </mat-grid-tile>
+                    <mat-grid-tile *ngFor="let img of fotosEvolucion">
+                        <img [src]="img" width="50%">
+                    </mat-grid-tile>
+                </div>
+            </mat-grid-list>
+        </form>
+    </div>
+    
+    <div style="margin-top: 15px;text-align: right;" class="text-right">
+        <button mat-raised-button color="accent" (click)="guardarEvolucion()"><mat-icon>save</mat-icon>Guardar</button>
+    </div>
+    
+</mat-dialog-content>
+

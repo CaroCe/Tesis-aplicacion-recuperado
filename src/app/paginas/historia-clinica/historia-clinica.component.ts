@@ -2,7 +2,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormControlName } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { HistoriaClinicaConsulta, Lateralidad } from './historia-clinica';
+import { HistoriaClinicaConsulta, Lateralidad, FiltroHistoria } from './historia-clinica';
 import { MatTableDataSource } from '@angular/material/table';
 import { Usuario } from '../users/user';
 import { UsuariosService } from 'src/app/servicios/usuarios.service';
@@ -15,6 +15,15 @@ import { SedesService } from '../../servicios/sedes.service';
 import { Rol } from '../users/rol';
 import { Sede } from '../admin-sedes/sede';
 import { MatStepper } from '@angular/material/stepper';
+import { EjercicioTratamiento, FaseTratamiento } from '../tratamiento/tratamiento';
+import { Evolucion, Consulta } from '../consultas/consulta';
+import { jsPDF } from "jspdf";
+import html2canvas from 'html2canvas';
+import { TratamientoService } from '../../servicios/tratamiento.service';
+import { ConsultasService } from '../../servicios/consulta.service';
+import { FiltroConsulta } from '../consultas/buscar-consulta/buscar-consulta';
+import { EvolucionService } from '../../servicios/evolucion.service';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 
 
 @Component({
@@ -23,18 +32,40 @@ import { MatStepper } from '@angular/material/stepper';
   styleUrls: ['./historia-clinica.component.css']
 })
 export class HistoriaClinicaComponent {
+
   usuarios: Usuario[]=[];
   filteredOptions: Observable<Usuario[]> | undefined;
+  datosHistoria:HistoriaClinicaConsulta={};
+  datosConsulta:Consulta={}
+  datosTratamientos:FaseTratamiento[]=[];
+  datosEvolucion: Evolucion[]=[];
+  datosEjercicios: EjercicioTratamiento[]=[];
 
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
   });
+  
+  formFiltro:FormGroup;
   displayedColumns: string[] = ['fechaRegistro', 'paciente', 'cedula', 'id'];
   dataSource= new MatTableDataSource<HistoriaClinicaConsulta>();
-  constructor(private dialog:MatDialog, private _httpUsuarioService: UsuariosService, private _httpHistoriaService: HistoriaClinicaService) {
+  constructor(private dialog:MatDialog, private _httpUsuarioService: UsuariosService, 
+    private _httpHistoriaService: HistoriaClinicaService, private formBuilder: FormBuilder) {
     this._httpUsuarioService.getUsuarios().subscribe(resp=>{this.usuarios=resp});
+    this.formFiltro=formBuilder.group({
+      pacienteId: new FormControl(0),
+      fechaDesde: new FormControl(new Date('2022-01-01')),
+      fechaHasta: new FormControl(new Date()),
+      cedula: new FormControl('')
+    })
     this.cargarTabla();
+  }
+  fechaDesde(type: string, event: MatDatepickerInputEvent<Date>) {
+    this.formFiltro.patchValue({fechaDesde:event.value?.getFullYear()+'-'+(Number(event.value?.getMonth())+1)+'-'+event.value?.getDate()});
+  }
+
+  fechaHasta(type: string, event: MatDatepickerInputEvent<Date>) {
+    this.formFiltro.patchValue({fechaHasta:event.value?.getFullYear()+'-'+(Number(event.value?.getMonth())+1)+'-'+event.value?.getDate()});
   }
 
   verHistoria(datos: HistoriaClinicaConsulta) {
@@ -48,13 +79,16 @@ export class HistoriaClinicaComponent {
     }); 
   }
   cargarTabla(){
-    this._httpHistoriaService.getHistorias().subscribe(resp => {
+    let filtro:FiltroHistoria={
+      fechaDesde: this.formFiltro.value.fechaDesde,
+      fechaHasta: this.formFiltro.value.fechaHasta,
+      pacienteId: this.formFiltro.value.pacienteId,
+      cedula: this.formFiltro.value.cedula
+    }
+    this._httpHistoriaService.postHistoriasFiltros(filtro).subscribe(resp => {
       this.dataSource= new MatTableDataSource<HistoriaClinicaConsulta>();
       this.dataSource.data=resp
     })
-  }
-  descargarHistoria(id: number) {
-
   }
   nuevaHistoria(){
     
@@ -66,6 +100,14 @@ export class HistoriaClinicaComponent {
     dialogRef.afterClosed().subscribe(result => {
      
     }); 
+  }
+
+  descargarDocumento(element: HistoriaClinicaConsulta){
+    const dialogRef = this.dialog.open(DialogDescargaHistoria,{
+      width: '1400px',
+      height:'1000px',
+      data: element
+    })
   }
 }
 
@@ -251,6 +293,129 @@ export class DialogHistoriaClinica {
       });
     }
 
+  }
+
+  
+}
+
+
+@Component({
+  selector: 'dialog-descarga-historia',
+  templateUrl: './dialog-descarga-historia.html'
+})
+export class DialogDescargaHistoria {
+
+  
+  datosHistoria:HistoriaClinicaConsulta={};
+  listaConsultas: Consulta[]=[];
+  datosTratamientos:FaseTratamiento[]=[];
+  datosEvolucion: Evolucion[]=[];
+  datosEjercicios: EjercicioTratamiento[]=[];
+  fechaDesde= new Date("January 1, 2021 00:00:00");
+
+  nombrePaciente: string="";
+  dias:number=7;
+  diaSemana:string[] = [
+    'Domingo',
+    'Lunes',
+    'Martes',
+    'Miércoles',
+    'Jueves',
+    'Viernes',
+    'Sábado',
+  ];
+
+  constructor(
+    private dialog: MatDialog,
+    public dialogRef: MatDialogRef<DialogDescargaHistoria>,
+    @Inject(MAT_DIALOG_DATA) public data: HistoriaClinicaConsulta,
+    private formBuilder: FormBuilder,
+    private _httpTratamientoService: TratamientoService,
+    private _httpConsultaService:ConsultasService,
+    private _httpEvolucionesService: EvolucionService) {
+      
+      let filtros:FiltroConsulta={
+        fechaDesde: this.fechaDesde, 
+        fechaHasta: new Date(),
+        pacienteId: Number(data.pacienteId)
+      }
+      _httpConsultaService.postConsultaPorFiltros(filtros).subscribe(resp=> {
+        this.listaConsultas=resp;
+        resp.forEach((consulta,i) =>{
+          _httpTratamientoService.getTratamientosPorConsulta(Number(consulta.consultaId)).subscribe(respTratamiento=>{
+            this.listaConsultas[i].tratamientos=respTratamiento;
+          });
+
+          _httpEvolucionesService.getEvolucionesPorConsulta(Number(consulta.consultaId)).subscribe(respEvolucion=>{
+            this.listaConsultas[i].evolucions=respEvolucion;
+          })
+        })
+      })
+      setTimeout(() => {
+        this.descargar()
+      }, 100);
+        
+      /*;*/
+  }
+
+  descargar(){
+    setTimeout(() => {
+      const DATA = document.getElementById('divHtml');
+      console.log(DATA?.offsetHeight)
+      const doc = new jsPDF('p', 'pt', 'a4');
+      const options = {
+        background: 'white',
+        scale: 3
+      };
+      html2canvas(DATA!, options).then((canvas) => {
+
+        const imgData = canvas.toDataURL('image/PNG');
+        var imgWidth = 200;
+        var pageHeight = 290;
+        var imgHeight = (canvas.height * imgWidth / canvas.width)+5;
+        var heightLeft = imgHeight;
+        var doc = new jsPDF('p', 'mm');
+        var position = 5;
+        doc.addImage(imgData, 'PNG', 5, position, imgWidth, imgHeight,'FAST');
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+
+          position = heightLeft - imgHeight;
+          doc.addPage();
+          doc.addImage(imgData, 'PNG', 5, position, imgWidth, imgHeight,'FAST');
+          heightLeft -= pageHeight;
+          position+=5;
+        }
+        return doc;
+      }).then((docResult) => {
+        
+        if(docResult!= undefined){
+          //this.isLoadingResults=false
+          let nombre=this.data.usuarioNombre
+          docResult.save(`Historia Clínica`+nombre+`.pdf`);
+          
+          
+        }
+
+      }).catch(error=>{
+        
+      });
+      
+    }, 500);
+  }
+
+  formatoFecha(date:any): string{
+    let fecha = date.toString();
+    
+   return fecha.substring(0,10)
+  }
+
+  calcularEdad(date:any): string{
+    let fechaNacimiento = new Date(date)
+    let fechaActual = new Date();
+    let edad = Number(fechaActual.getFullYear())-Number(fechaNacimiento.getFullYear());
+    return edad.toString();
   }
 
 }

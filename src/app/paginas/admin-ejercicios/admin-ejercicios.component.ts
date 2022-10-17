@@ -6,6 +6,7 @@ import { FormGroup, FormBuilder, FormControl, FormControlName } from '@angular/f
 import { EjerciciosService } from '../../servicios/ejercicios.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MatTableDataSource } from '@angular/material/table';
+import { DialogError } from '../dialog-general-error/dialog-error';
 
 @Component({
   selector: 'app-admin-ejercicios',
@@ -66,12 +67,13 @@ export class AdminEjerciciosComponent implements OnInit {
         }); 
       })
     }else{
-      let ejercicio:Ejercicio={
+      let ejercicioEditado:Ejercicio={
+        ejercicioId:this.ejercicioId,
         ejercicioNombre: this.ejercicioForm.value.ejercicioNombre,
         ejercicioDescripcion: this.ejercicioForm.value.ejercicioDescripcion,
         ejercicioGrafico:this.ejercicioForm.value.ejercicioGrafico
       }
-      this._httpEjercicioService.putEjercicio(ejercicio,this.ejercicioId).subscribe(resp=>{
+      this._httpEjercicioService.putEjercicio(ejercicioEditado,this.ejercicioId).subscribe(resp=>{
         const dialogRef = this.dialog.open(DialogGeneral, {
           width: '400px',
           data: {
@@ -81,6 +83,10 @@ export class AdminEjerciciosComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
           this.cargarTabla();
         }); 
+      },error=>{
+        const dialogRef = this.dialog.open(DialogError, {
+          width: '400px'
+        });
       })
     }
 
@@ -98,6 +104,7 @@ export class AdminEjerciciosComponent implements OnInit {
     }); 
   }
   editarEjercicio(item:any){
+    console.log(item);
     this.ejercicioId=item.ejercicioId;
     this.ejercicioForm.patchValue({ejercicioNombre:item.ejercicioNombre,ejercicioDescripcion:item.ejercicioDescripcion,ejercicioGrafico:item.ejercicioGrafico});
     this.urlGrafico = this.sanitizer.bypassSecurityTrustResourceUrl(item.ejercicioGrafico);

@@ -1,0 +1,22 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Fase </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+            <mat-grid-list cols="5" rowHeight="300">
+                <mat-grid-tile *ngFor="let item of data">
+                    <div style="height: 100%;text-align: center;">
+                        <h3>{{formatoFecha(item.tratamientoDiaFecha)}} </h3>
+                        <mat-divider></mat-divider>
+                        <ng-container *ngFor="let ejercicio of item.ejercicioTratamientos" style="width: 100%;padding: 5px;">
+                            <button mat-raised-button color="accent" > 
+                                <span style="word-break: break-all;max-width:20px">{{ejercicio.ejercicio?.ejercicioNombre}}</span>
+                            </button>
+                                
+                        </ng-container>
+                    </div>
+                </mat-grid-tile>
+            </mat-grid-list>
+            
+    </mat-card-content>
+</mat-card>

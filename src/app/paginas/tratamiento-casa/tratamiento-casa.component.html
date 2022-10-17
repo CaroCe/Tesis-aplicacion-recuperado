@@ -3,68 +3,19 @@
         <mat-card-title>Tratamiento en casa</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <mat-grid-list cols="5" rowHeight="700">
-            <mat-grid-tile>
-                <div style="height: 100%;">
-                    <h3>Lunes</h3>
+        <mat-grid-list cols="5" rowHeight="500">
+            <mat-grid-tile *ngFor="let dia of listaTratamientos[1]?.tratamientosDia; let i=index">
+                <div style="height: 100%;text-align: center;">
+                    <h3 >{{fechaDia(dia.tratamientoDiaFecha)}} </h3>
                     <mat-divider></mat-divider>
-                    <button mat-raised-button color="accent">Ejercicio en casa 1
-                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
-                    </button>
-
-                    <button mat-raised-button color="accent">Ejercicio en casa 1
-                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
-                    </button>
-
-                    <button mat-raised-button color="accent">Ejercicio en casa 1
-                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
-                    </button>
-                </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <div style="height: 100%;">
-                    <h3>Martes</h3>
-                    <mat-divider></mat-divider>
-                    <button mat-raised-button color="accent">Ejercicio en casa 2
-                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
-                    </button>
-                    <button mat-raised-button color="accent">Ejercicio en casa 2
-                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
-                    </button>
-                    <button mat-raised-button color="accent" (click)="verEjercicio()">Ejercicio en casa 2
-                        <mat-checkbox checked="false"></mat-checkbox>
-                    </button>
-                </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <div style="height: 100%;">
-                    <h3>Miércoles</h3>
-                    <mat-divider></mat-divider>
-                    <button mat-raised-button color="accent">Ejercicio en casa 3
-                        <mat-checkbox></mat-checkbox>
-                    </button>
-                    <button mat-raised-button color="accent">Ejercicio en casa 3
-                        <mat-checkbox></mat-checkbox>
-                    </button>
-                </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <div style="height: 100%;">
-                    <h3>Jueves</h3>
-                    <mat-divider></mat-divider>
-                    <button mat-raised-button color="accent">Ejercicio en casa 4
-                        <mat-checkbox></mat-checkbox>
-                    </button>
-                    <button mat-raised-button color="accent">Ejercicio en casa 4
-                        <mat-checkbox></mat-checkbox>
-                    </button>
-                </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <div style="height: 100%;">
-                    <h3>Viernes</h3>
-                    <mat-divider></mat-divider>
-                    <button mat-raised-button color="primary">Cita</button>
+                    <ng-container *ngFor="let ejercicio of dia.ejercicioTratamientos; let j=index">
+                        <button mat-raised-button color="accent" (click)="verEjercicio(ejercicio)">
+                            Ejercicio en casa {{j+1}}
+                        </button>
+                        <mat-checkbox [checked]="ejercicio.ejercicioEstado" color="primary" (click)="terminarEjercicio(ejercicio)"></mat-checkbox>
+                    </ng-container>
+                    
+                    
                 </div>
             </mat-grid-tile>
         </mat-grid-list>

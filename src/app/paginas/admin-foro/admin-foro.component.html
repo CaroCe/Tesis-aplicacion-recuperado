@@ -3,15 +3,20 @@
         <mat-card-title>Administración foro</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <mat-form-field appearance="outline">
-            <mat-label>Problemas</mat-label>
-            <input matInput>
-        </mat-form-field>
+        <form [formGroup]="formFiltro">
+          <mat-form-field appearance="outline">
+              <mat-label>Problemas</mat-label>
+              <input matInput type="text" formControlName="problema">
+          </mat-form-field>
+          
+          <button mat-raised-button color="primary" style="text-align: right;" (click)="cargarConsultas()">Buscar</button>
+        </form>
+        
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;">
 
             <ng-container matColumnDef="problema">
               <th mat-header-cell *matHeaderCellDef> Problema </th>
-              <td mat-cell *matCellDef="let element"> {{element.problema}} </td>
+              <td mat-cell *matCellDef="let element"> {{element.consultaProblema}} </td>
             </ng-container>
           
             <!-- Name Column -->
@@ -25,7 +30,9 @@
               <th mat-header-cell *matHeaderCellDef> Fases </th>
               <td mat-cell *matCellDef="let element">
                 <mat-list>
-                    <mat-list-item style="height: 50px;" *ngFor="let item of element.fases">{{item}}</mat-list-item>
+                    <mat-list-item style="height: 50px;" *ngFor="let fase of element.tratamientos"> 
+                      <button mat-raised-button color="primary" (click)="abrirFase(fase)"> Fase {{fase.tratamientoFase}}</button>
+                     </mat-list-item>
                 </mat-list>
               </td>
             </ng-container>
@@ -34,7 +41,7 @@
             <ng-container matColumnDef="foro">
               <th mat-header-cell *matHeaderCellDef> Foro </th>
               <td mat-cell *matCellDef="let element"> 
-                <mat-checkbox checked="element.foro">Activar foro</mat-checkbox>
+                <mat-checkbox [checked]="element.tratamientoCompleto">Activar foro</mat-checkbox>
             </td>
             </ng-container>
           

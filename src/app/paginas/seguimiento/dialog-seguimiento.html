@@ -3,72 +3,29 @@
         <mat-card-title>Seguimiento paciente</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <mat-grid-list cols="5" rowHeight="500">
-            <mat-grid-tile>
-                <div style="height: 100%;">
-                    <h3>Lunes</h3>
-                    <mat-divider></mat-divider>
-                    <button mat-raised-button color="accent">Ejercicio 1
-                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
-                    </button>
-
-                    <button mat-raised-button color="accent">Ejercicio 1
-                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
-                    </button>
-
-                    <button mat-raised-button color="accent">Ejercicio 1
-                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
-                    </button>
-                </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <div style="height: 100%;">
-                    <h3>Martes</h3>
-                    <mat-divider></mat-divider>
-                    <button mat-raised-button color="accent">Ejercicio 2
-                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
-                    </button>
-                    <button mat-raised-button color="accent">Ejercicio 2
-                        <mat-checkbox checked="true" color="primary"></mat-checkbox>
-                    </button>
-                    <button mat-raised-button color="accent">Ejercicio 2
-                        <mat-checkbox checked="false"></mat-checkbox>
-                    </button>
-                </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <div style="height: 100%;">
-                    <h3>Miércoles</h3>
-                    <mat-divider></mat-divider>
-                    <button mat-raised-button color="accent">Ejercicio 3
-                        <mat-checkbox></mat-checkbox>
-                    </button>
-                    <button mat-raised-button color="accent">Ejercicio 3
-                        <mat-checkbox></mat-checkbox>
-                    </button>
-                </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <div style="height: 100%;">
-                    <h3>Jueves</h3>
-                    <mat-divider></mat-divider>
-                    <button mat-raised-button color="accent">Ejercicio 4
-                        <mat-checkbox></mat-checkbox>
-                    </button>
-                    <button mat-raised-button color="accent">Ejercicio 4
-                        <mat-checkbox></mat-checkbox>
-                    </button>
-                </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <div style="height: 100%;">
-                    <h3>Viernes</h3>
-                    <mat-divider></mat-divider>
-                </div>
-            </mat-grid-tile>
-        </mat-grid-list>
+        <div *ngFor="let fase of listaFases" >
+            <h3>Fase {{fase.tratamientoFase}}</h3>
+            <mat-grid-list cols="5" rowHeight="300">
+                <mat-grid-tile *ngFor="let item of fase.tratamientosDia">
+                    <div style="height: 100%;text-align: center;">
+                        <h3>{{formatoFecha(item.tratamientoDiaFecha)}} </h3>
+                        <mat-divider></mat-divider>
+                        <ng-container *ngFor="let ejercicio of item.ejercicioTratamientos" style="width: 100%;padding: 5px;">
+                            <button mat-raised-button color="accent" > 
+                                <span style="word-break: break-all;max-width:20px">{{ejercicio.ejercicio?.ejercicioNombre}}</span>
+                                <mat-checkbox [checked]="ejercicio.ejercicioEstado" color="primary" ></mat-checkbox>
+                            </button>
+                                
+                        </ng-container>
+                    </div>
+                </mat-grid-tile>
+                
+            </mat-grid-list>
+            <hr>
+        </div>        
+            
     </mat-card-content>
     <mat-card-actions>
-        <button mat-button>Ok</button>
+        <button mat-button>Aceptar</button>
     </mat-card-actions>
 </mat-card>

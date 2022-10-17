@@ -1,20 +1,21 @@
 import { FaseTratamiento } from '../tratamiento/tratamiento';
 export interface Consulta {
     consultaId?:             number;
-    especialistaId:         number;
-    historiaId:             number;
-    consultaFecha:          Date;
-    consultaMotivo:         string;
-    consultaDescripcion:    string;
-    consultaImagen:         string;
-    consultaDescripImagen:  string;
-    consultaProblema:       string;
-    examinacionObservacion: string;
-    examinacionInspeccion:  string;
-    diagnostico:            string;
+    especialistaId?:         number;
+    historiaId?:             number;
+    consultaFecha?:          Date;
+    consultaMotivo?:         string;
+    consultaDescripcion?:    string;
+    consultaImagen?:         string;
+    consultaDescripImagen?:  string;
+    consultaProblema?:       string;
+    examinacionObservacion?: string;
+    examinacionInspeccion?:  string;
+    diagnostico?:            string;
     evolucions?:             Evolucion[];
-    fotosExaminacions?:      FotoConsulta[];
+    fotosExaminacion?:      FotoConsulta[];
     tratamientos?:           FaseTratamiento[];
+    pacienteNombre?:         string;
 }
 export interface FotoConsulta {
     fotoExaminacionId:          number;
@@ -26,16 +27,16 @@ export interface FotoConsulta {
 
 export interface Evolucion {
     
-    evolucionId:              number;
-    consultaId:               number;
-    evolucionDescripcion:     string;
-    evolucionFecha:           Date;
-    fotosEvolucions:          FotosEvolucion[];
+    evolucionId?:              number;
+    consultaId?:               number;
+    evolucionDescripcion?:     string;
+    evolucionFecha?:           Date;
+    fotosEvolucions?:          FotosEvolucion[];
   }
   
   export interface FotosEvolucion {
-      fotoEvolucionId:            number;
+      fotoEvolucionId?:            number;
       evolucionId:                number;
-      fotoEvolucionImagen:        string;
-      fotoEvolucionDescripcion:   string;
+      fotoEvolucionImagen?:        string;
+      fotoEvolucionDescripcion?:   string;
   }

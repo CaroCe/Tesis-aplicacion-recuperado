@@ -1,0 +1,22 @@
+.mat-form-field{
+    width: 100%;
+    margin: 5px;
+  }
+  
+  .card-comentario{
+    max-width: 600px;
+    margin-bottom: 8px;
+  }
+
+  .comentario::after{
+    clip-path: polygon(18px 0, 32px 0, 0 40px, 0 38px, 0 0, 18px 0);
+    background: var(--blue-100);
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 99%;
+    left: 0;
+    display: block;
+    content: '';
+    border-radius: 0 5px 0;
+}

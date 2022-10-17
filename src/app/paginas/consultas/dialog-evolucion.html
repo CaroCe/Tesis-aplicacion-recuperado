@@ -7,7 +7,7 @@
             <mat-grid-tile>
                 <mat-form-field appearance="outline">
                     <mat-label>Fecha</mat-label>
-                    <input matInput [matDatepicker]="picker">
+                    <input matInput [matDatepicker]="picker" formC>
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
@@ -22,24 +22,6 @@
                 <input style="width: 80%; height: 80%;" type="file" accept="image/png, image/jpeg" #fileInput />
                 <mat-card-subtitle><button mat-raised-button (click)="uploadFile();" color="accent">Subir</button>
                 </mat-card-subtitle>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <div class="scroll">
-                    <mat-grid-list cols="2" rowHeight="50px">
-                        <mat-grid-tile>
-                            <img src="https://www.sochradi.cl/wp-content/uploads/infopacientes_examen_musculoesqueletico_rx_pie_2.jpg" height="50px">
-                        </mat-grid-tile>
-                        <mat-grid-tile>
-                            <img src="https://www.clikisalud.net/wp-content/uploads/2021/01/radiografias-pies-debes-saber.jpg" height="50px">
-                        </mat-grid-tile>
-                        <mat-grid-tile>
-                            <img src="https://www.cercosalud.com/imagenes/text/00000255/files/RX-PIE-Y-DEDOS.jpg" height="50px">
-                        </mat-grid-tile>
-                        <mat-grid-tile>
-                            <img src="https://thumbs.dreamstime.com/b/radiograf%C3%ADa-del-pie-derecho-2783806.jpg" height="50px">
-                        </mat-grid-tile>
-                      </mat-grid-list>
-                </div>
             </mat-grid-tile>
         </mat-grid-list>
     </mat-card-content>

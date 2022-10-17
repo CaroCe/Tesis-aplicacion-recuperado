@@ -1,16 +1,23 @@
 import { AfterViewInit, Component, ElementRef, Inject, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { fromEvent, map, Observable, pairwise, startWith, Subscription, switchMap, takeUntil } from 'rxjs';
 import { Usuario } from '../users/user';
 import { UsuariosService } from '../../servicios/usuarios.service';
-import { Consulta, FotoConsulta } from './consulta';
+import { Consulta, FotoConsulta, Evolucion } from './consulta';
 import { ConsultasService } from 'src/app/servicios/consulta.service';
-import { FaseTratamiento, TratamientoDia } from '../tratamiento/tratamiento';
+import { FaseTratamiento, TratamientoDia, EjercicioTratamiento } from '../tratamiento/tratamiento';
 import { TratamientoService } from 'src/app/servicios/tratamiento.service';
 import { Ejercicio } from '../admin-ejercicios/ejercicio';
-import { EjercicioTratamiento } from '../tratamiento/tratamiento';
 import { EjerciciosService } from 'src/app/servicios/ejercicios.service';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { DialogGeneral } from '../dialog-general/dialog-general';
+import { HistoriaClinicaConsulta } from '../historia-clinica/historia-clinica';
+import { EvolucionService } from '../../servicios/evolucion.service';
+import { FiltroConsulta } from './buscar-consulta/buscar-consulta';
+import { jsPDF } from "jspdf";
+import html2canvas from 'html2canvas';
+import { HistoriaClinicaService } from '../historia-clinica/historia-clinica.service';
 
 @Component({
   selector: 'app-consultas',
@@ -78,12 +85,13 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
   ngOnInit(): void {
   }
   crearConulta(item: Usuario) {
+    
     this.pacId = item.usuarioId;
     this.historiaId = item.historiaId??0;
   }
   guardarEsquema() {
     this.imagenEsquema = this.canvas.nativeElement.toDataURL();
-    console.log(this.imagenEsquema);
+    
   }
   ngAfterViewInit() {
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
@@ -143,9 +151,17 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
       especialistaId:Number(localStorage.getItem('userId')),
       historiaId:this.historiaId,
     }
-    this._httpConsulta.postCrearConsulta(itemConsulta).subscribe(c=>{
-      this.consultaId = c;
-      this.listaArchivos.forEach(cx=>{
+    this._httpConsulta.postCrearConsulta(itemConsulta).subscribe(respuestaId=>{
+      this.consultaId = respuestaId;
+      if(this.listaArchivos.length==0){
+        const dialogRef = this.dialog.open(DialogGeneral, {
+          width: '400px',
+          data: {
+            mensaje:'Consulta creada exitosamente'
+          }
+        });
+      }
+      this.listaArchivos.forEach((cx, i)=>{
         let item:FotoConsulta ={
           fotoExaminacionImagen:cx,
           fotoExaminacionDescripcion:"",
@@ -153,7 +169,15 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
           fotoExaminacionId:0
         }
         this._httpConsulta.postImagen(item).subscribe(h=>{
-          console.log(item);
+          console.log(i)
+          if(i==this.listaArchivos.length){
+            const dialogRef = this.dialog.open(DialogGeneral, {
+              width: '400px',
+              data: {
+                mensaje:'Consulta creada exitosamente'
+              }
+            });
+          }
         });
       });
     });
@@ -183,13 +207,23 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
     }
   }
   agregarFase() {
-    const dialogRef = this.dialog.open(DialogTratamiento, {
+    let datos:FaseTratamiento={
+      tratamientoId:0,
+      tratamientoDias : 0,
+      tratamientoFechaInicio: new Date(),
+      tratamientoFase :'',
+      tratamientoDescripcion : '',
+      tratamientoObservacion : '',
+      tratamientoRecomendacion : '',
+      consultaId:Number(this.consultaId),
+      tratamientoFechaCreacion: new Date(),
+      tratamientoCompleto: false,
+      tratamientosDia:[]
+    }
+    const dialogRef = this.dialog.open(DialogTratamientoFase, {
       width: '1400px',
-      height: '600px',
-      data: {
-        id:this.consultaId,
-        numero:this.listaArchivos.length
-      }
+      height: '1000px',
+      data: datos
     });
     dialogRef.afterClosed().subscribe(result => {
 
@@ -216,24 +250,25 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
         this.fileInput.nativeElement.value = '';
       }
     ).catch(e=>{
-        console.log(e);
     });
 
   }
 
 }
 @Component({
-  selector: 'dialog-tratamiento',
-  templateUrl: 'dialog-tratamiento.html',
-  styleUrls: ['dialog-tratamiento.css']
+  selector: 'dialog-tratamiento-fase',
+  templateUrl: 'dialog-tratamiento-fase.html',
+  styleUrls: ['dialog-tratamiento-fase.css']
 })
-export class DialogTratamiento {
+export class DialogTratamientoFase implements AfterViewInit{
   mensaje: string = '';
-
-  dias = new FormControl('');
+  form:FormGroup;
+  @ViewChild('fechaInput') fechaInput!: MatDatepickerInputEvent<Date>;
+  @ViewChild('diaInput') diaInput!: ElementRef;
+  dias = new FormControl('',Validators.required);
   fechaInicio = new FormControl(new Date(Date.now()));
   descripcion = new FormControl('');
-  detalles = new FormControl('');
+  observacion = new FormControl('');
   recomendacion = new FormControl('');
   diaSemana:string[] = [
     'Domingo',
@@ -248,77 +283,149 @@ export class DialogTratamiento {
 
 
   constructor(
-    public dialogRef: MatDialogRef<DialogTratamiento>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef1: MatDialogRef<DialogTratamientoFase>,
+    @Inject(MAT_DIALOG_DATA) public data: FaseTratamiento,
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
     private _httpTratamiento:TratamientoService) {
-      this.fechaInicio.valueChanges.subscribe(c=>{
-        this.listaDias=[]
-        for(let i=0;i<Number(this.dias.value);i++){
-          let add:number =i*(24*60*60*1000);
-          let fech:number = c?.getTime()??0;
-          let itemDia:TratamientoDia={
-            tratamientoDiaFecha: new Date(add + fech ),
-            tratamientoDiaId:0,
-            tratamientoId:0,
-            ejercicios:[],
-            fecha:''
-          }
-          console.log(c?.getDate());
-          console.log(i*(24*60*60*1000));
-          itemDia.fecha = this.diaSemana[itemDia.tratamientoDiaFecha.getDay()]+' '+itemDia.tratamientoDiaFecha.getDate() +'-'+(itemDia.tratamientoDiaFecha.getMonth()+1)
-          this.listaDias.push(itemDia);
+      
+      this.form=formBuilder.group({
+        fase : new FormControl(data.tratamientoFase, Validators.required),
+        dias : new FormControl(data.tratamientoDias,Validators.required),
+        fechaInicio : new FormControl(new Date(data.tratamientoFechaInicio), Validators.required),
+        descripcion : new FormControl(data.tratamientoDescripcion),
+        observacion : new FormControl(data.tratamientoObservacion),
+        recomendacion : new FormControl(data.tratamientoRecomendacion),
+        fechaCreacion: new FormControl(data.tratamientoFechaCreacion)
+      })
+      if(data.tratamientoId!==0){
+        this.cargarDias();
+      }      
+  }
+
+  ngAfterViewInit(): void {
+    //this.fechaInput.target.dateInput.subscribe(resp=>{console.log("cambio fecha")})
+  }
+  generarDias(){
+    this.listaDias=[]
+      for(let i=0;i<Number(this.form.value.dias);i++){
+        let add:number =i*(24*60*60*1000);
+        let fech:number = this.form.value.fechaInicio?.getTime()??0;
+        let itemDia:TratamientoDia={
+          tratamientoDiaFecha: new Date(add + fech ),
+          tratamientoDiaId:0,
+          tratamientoId:0,
+          ejercicioTratamientos:[],
+          fecha:''
         }
-      });
+        //console.log(this.fechaInput.value?.getDate());
+        //console.log(i*(24*60*60*1000));
+        itemDia.fecha = this.diaSemana[itemDia.tratamientoDiaFecha.getDay()]+' '+itemDia.tratamientoDiaFecha.getDate() +'-'+(itemDia.tratamientoDiaFecha.getMonth()+1)
+        this.listaDias.push(itemDia);
+      }
   }
-  onSubmit(data: any) {
-  }
-  guardar(){
-    let itemFase:FaseTratamiento ={
-      consultaId:this.data.id,
-      tratamientoCompleto:false,
-      tratamientoDescripcion:this.descripcion.value??'',
-      tratamientoDias:Number(this.dias.value),
-      tratamientoFase:this.data.numero+1,
-      tratamientoFechaCreacion: new Date(Date.now()),
-      tratamientoFechaInicio: this.fechaInicio.value??new Date(Date.now()),
-      tratamientoRecomendacion: this.recomendacion.value??"",
-      tratamientoObservacion:'',
-      tratamientoId:0
-    }
-    this._httpTratamiento.postCrearTratamiento(itemFase).subscribe(t=>{
-      this.listaDias.forEach(d=>{
-        d.tratamientoId = t.id;
-        this._httpTratamiento.postCrearTratamientoDia(d).subscribe(h=>{
-          
-          d.ejercicios.forEach(k=>{
-            k.tratamientoDiaId = h.id
-            this._httpTratamiento.postCrearEjercicioTratamiento(k).subscribe(
-              e=>{
-                
-              }
-            )
-          });
-        })
-      });
+
+  cargarDias(){
+    console.log(this.data)
+    this.listaDias=this.data.tratamientosDia;
+    this.listaDias?.forEach(dia=>{
+    let fecha= new Date(dia.tratamientoDiaFecha);
+    dia.fecha=this.diaSemana[fecha.getDay()]+' '+fecha.getDate() +'-'+(fecha.getMonth()+1);
+      dia.ejercicioTratamientos= dia.ejercicioTratamientos;
+      //this.listaDias.push(dia);
     });
   }
 
-  agregar(id:number) {
+  onSubmit(data: any) {
+  }
+
+  guardarFase(){
+    let itemFase:FaseTratamiento ={
+      consultaId:this.data.consultaId,
+      tratamientoCompleto:this.data.tratamientoCompleto,
+      tratamientoDescripcion:this.form.value.descripcion,
+      tratamientoDias:Number(this.form.value.dias),
+      tratamientoFase:this.form.value.fase,//this.data.numero+1,
+      tratamientoFechaCreacion: this.form.value.fechaCreacion,
+      tratamientoFechaInicio: this.form.value.fechaInicio,//??new Date(Date.now()),
+      tratamientoRecomendacion: this.form.value.recomendacion,
+      tratamientoObservacion:this.form.value.observacion,
+      tratamientoId:this.data.tratamientoId,
+      tratamientosDia:[]
+    }
+    if(this.data.tratamientoId==0){
+      this._httpTratamiento.postCrearTratamiento(itemFase).subscribe(respuestaTratamiento=>{
+        this.listaDias.forEach((dia,i)=>{
+          dia.tratamientoId=respuestaTratamiento.tratamientoId;
+          let datosDia:TratamientoDia={
+            tratamientoDiaId:0,
+            tratamientoId:dia.tratamientoId,
+            tratamientoDiaFecha: dia.tratamientoDiaFecha,
+            ejercicioTratamientos:[]
+          }
+          this._httpTratamiento.postCrearTratamientoDia(datosDia).subscribe(respuestaDia=>{
+            dia.tratamientoDiaId=respuestaDia.tratamientoDiaId;
+            if(i+1===this.listaDias.length){
+              const dialogRef = this.dialog.open(DialogGeneral, {
+                width: '400px',
+                data: {
+                  mensaje:'Fase de Tratamiento creada exitosamente'
+                }
+              });
+              dialogRef.afterClosed().subscribe(result => {
+                
+              });
+            }
+          })
+        });
+      });
+    }else{
+      this._httpTratamiento.putTratamiento(itemFase, this.data.tratamientoId).subscribe(respuestaTratamiento=>{
+        const dialogRef = this.dialog.open(DialogGeneral, {
+          width: '400px',
+          data: {
+            mensaje:'Fase de Tratamiento editada exitosamente'
+          }
+        });
+      });
+    }
+  }
+
+  agregarEjercicio(diaId:number) {
+    let ejercicio:EjercicioTratamiento={
+      tratamientoDiaId:diaId,
+      ejercicioTratamientoId:0,
+      ejercicioTratamientoRepeticiones:0,
+      ejercicioTratamientoSerie:0,
+      ejercicioDescanso:'',
+      ejercicioId:0,
+      ejercicioNombre:'',
+      ejercicioEstado:false,
+      ejercicioObservacion:''
+    }
     const dialogRef = this.dialog.open(DialogEjercicio, {
       width: '450px',
       height: '550px',
-      data: {
-        diaId:id
-      }
+      data: ejercicio
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.listaDias[this.listaDias.findIndex(c=>c.tratamientoDiaId == id)].ejercicios.push(result);
+      if(result!==undefined){
+        this.listaDias[this.listaDias.findIndex(c=>c.tratamientoDiaId == result.tratamientoDiaId)].ejercicioTratamientos?.push(result);
+      }
+      
     });
   }
+
+  editarEjercicioTratamiento(element:EjercicioTratamiento){
+    const dialogRef = this.dialog.open(DialogEjercicio, {
+      width: '450px',
+      height: '550px',
+      data: element
+    });
+  }
+
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef1.close();
   }
 }
 
@@ -333,34 +440,73 @@ export class DialogEjercicio {
   descanso = new FormControl('');
   observacion = new FormControl('');
   listaEjercicios:Ejercicio[] =[];
+  form:FormGroup;
+  
   constructor(
-    public dialogRef: MatDialogRef<DialogEjercicio>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialog:MatDialog,
+    public dialogRef1: MatDialogRef<DialogEjercicio>,
+    @Inject(MAT_DIALOG_DATA) public data: EjercicioTratamiento,
     private formBuilder: FormBuilder,
-    private _httpEjercicio:EjerciciosService) {
+    private _httpEjercicio:EjerciciosService,
+    private _httpTratamientoService: TratamientoService) {
       _httpEjercicio.getEjercicios().subscribe(c=>{
         this.listaEjercicios = c;
       });
+      this.form=formBuilder.group({
+        repeticiones: new FormControl(data.ejercicioTratamientoRepeticiones,Validators.required),
+        series: new FormControl(data.ejercicioTratamientoSerie,Validators.required),
+        descanso: new FormControl(data.ejercicioDescanso,Validators.required),
+        observacion: new FormControl(data.ejercicioObservacion),
+        ejercicioId: new FormControl(data.ejercicioId),
+        ejercicioNombre: new FormControl(data.ejercicioNombre),
+      })
   }
   onSubmit(data: any) {
   }
-  guardar(){
-    let item:EjercicioTratamiento = {
-      ejercicioTratamientoRepeticiones:Number(this.repeticiones.value),
-      ejercicioDescanso:this.descanso.value??'',
-      tratamientoDiaId:this.data.diaId,
-      ejercicioObservacion: this.observacion.value??'',
-      ejercicioTratamientoSerie:Number(this.series.value),
-      ejercicioEstado:false,
-      ejercicioNombre:'',
-      ejercicioId:0,
-      ejercicioTratamientoId:0
-    }
-    this.dialogRef.close(item);
+
+  ejercicioSeleccionado(value: Ejercicio){
+    console.log(value)
+    this.form.patchValue({ejercicioNombre:value.ejercicioNombre});
+
   }
 
-  onNoClick(): void {
-    this.dialogRef.close();
+  guardar(){
+    let item:EjercicioTratamiento = {
+      ejercicioTratamientoId:this.data.ejercicioTratamientoId,
+      tratamientoDiaId:this.data.tratamientoDiaId,
+      ejercicioTratamientoRepeticiones:Number(this.form.value.repeticiones),
+      ejercicioTratamientoSerie:Number(this.form.value.series),
+      ejercicioDescanso:this.form.value.descanso,
+      ejercicioObservacion: this.form.value.observacion??'',
+      ejercicioEstado:false,
+      ejercicioNombre:this.form.value.ejercicioNombre,
+      ejercicioId:this.form.value.ejercicioId,
+    }
+    if(this.data.ejercicioTratamientoId==0){
+      this._httpTratamientoService.postCrearEjercicioTratamiento(item).subscribe(resp=>{
+        item.ejercicioTratamientoId=resp.ejercicioTratamientoId;
+        item.ejercicio={ejercicioId:this.form.value.ejercicioId,ejercicioNombre:this.form.value.ejercicioNombre,ejercicioDescripcion:'',ejercicioGrafico:''}
+        this.form.reset();
+        const dialogRef = this.dialog.open(DialogGeneral, {
+          width: '400px',
+          data: {
+            mensaje:'Ejercicio de Tratamiento agregado exitosamente'
+          }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          this.dialogRef1.close(item);
+        });
+      })
+    }else{
+      this._httpTratamientoService.putEjercicioTratamiento(item,Number(this.data.ejercicioTratamientoId)).subscribe(resp=>{
+        const dialogRef = this.dialog.open(DialogGeneral, {
+          width: '400px',
+          data: {
+            mensaje:'Ejercicio de Tratamiento agregado Correctamente'
+          }
+        });
+      })
+    }
   }
 }
 
@@ -389,4 +535,126 @@ export class DialogEvolucion {
   onNoClick(): void {
     this.dialogRef.close();
   }
+}
+
+
+@Component({
+  selector: 'dialog-descarga-fisioterapeutico',
+  templateUrl: './dialog-descarga-fisioterapeutico.html'
+})
+export class DialogDescargaFisioterapeutico {
+
+  
+  datosHistoria:HistoriaClinicaConsulta={};
+  listaConsultas: Consulta[]=[];
+  datosTratamientos:FaseTratamiento[]=[];
+  datosEvolucion: Evolucion[]=[];
+  datosEjercicios: EjercicioTratamiento[]=[];
+  fechaDesde= new Date("January 1, 2021 00:00:00");
+
+  nombrePaciente: string="";
+  dias:number=7;
+  diaSemana:string[] = [
+    'Domingo',
+    'Lunes',
+    'Martes',
+    'Miércoles',
+    'Jueves',
+    'Viernes',
+    'Sábado',
+  ];
+
+  constructor(
+    private dialog: MatDialog,
+    public dialogRef: MatDialogRef<DialogDescargaFisioterapeutico>,
+    @Inject(MAT_DIALOG_DATA) public data: Consulta,
+    private formBuilder: FormBuilder,
+    private _httpTratamientoService: TratamientoService,
+    private _httpConsultaService:ConsultasService,
+    private _httpEvolucionesService: EvolucionService,
+    private _httpHistoriaService: HistoriaClinicaService) {
+      
+          _httpHistoriaService.getHistorias().subscribe(resp=>{
+            resp.forEach(element=>{
+              if(element.historiaId===data.historiaId){
+                this.datosHistoria=element;
+              }
+            })
+            console.log(this.datosHistoria);
+          })
+          _httpTratamientoService.getTratamientosPorConsulta(Number(data.consultaId)).subscribe(respTratamiento=>{
+            this.datosTratamientos=respTratamiento;
+          });
+
+          _httpEvolucionesService.getEvolucionesPorConsulta(Number(data.consultaId)).subscribe(respEvolucion=>{
+            this.datosEvolucion=respEvolucion;
+          })
+     
+      setTimeout(() => {
+        this.descargar()
+      }, 100);
+        
+      /*;*/
+  }
+
+  descargar(){
+    setTimeout(() => {
+      const DATA = document.getElementById('divHtmlFisio');
+      console.log(DATA?.offsetHeight)
+      const doc = new jsPDF('p', 'pt', 'a4');
+      const options = {
+        background: 'white',
+        scale: 3
+      };
+      html2canvas(DATA!, options).then((canvas) => {
+
+        const imgData = canvas.toDataURL('image/PNG');
+        var imgWidth = 200;
+        var pageHeight = 290;
+        var imgHeight = (canvas.height * imgWidth / canvas.width)+5;
+        var heightLeft = imgHeight;
+        var doc = new jsPDF('p', 'mm');
+        var position = 5;
+        doc.addImage(imgData, 'PNG', 5, position, imgWidth, imgHeight,'FAST');
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+
+          position = heightLeft - imgHeight;
+          doc.addPage();
+          doc.addImage(imgData, 'PNG', 5, position, imgWidth, imgHeight,'FAST');
+          heightLeft -= pageHeight;
+          position+=5;
+        }
+        return doc;
+      }).then((docResult) => {
+        
+        if(docResult!= undefined){
+          //this.isLoadingResults=false
+          let nombre=this.data.pacienteNombre
+          docResult.save(`Historia Clínica`+nombre+`.pdf`);
+          
+          
+        }
+
+      }).catch(error=>{
+        
+      });
+      
+    }, 500);
+  }
+
+  formatoFecha(date:any): string{
+    let fecha = date.toString();
+    
+   return fecha.substring(0,10)
+  }
+
+  calcularEdad(date:any): string{
+    let fechaNacimiento = new Date(date)
+    let fechaActual = new Date();
+    let edad = Number(fechaActual.getFullYear())-Number(fechaNacimiento.getFullYear());
+    return edad.toString();
+  }
+
 }

@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>Evolución</h2>
+<mat-dialog-content class="mat-typography lg" style="width: 600px;height: 800px;">
+    
+    <div style="margin-bottom: 15px;text-align: right;" class="text-right">
+        <button mat-raised-button color="accent" (click)="nuevaEvolucion()"><mat-icon>add</mat-icon>Nueva Evolución</button>
+    </div>
+    
+    <br>
+    <div>
+        <table mat-table [dataSource]="dataSourceEvolucion" class="mat-elevation-z8" style="width: 100%;">
+
+            <ng-container matColumnDef="fecha">
+            <th mat-header-cell *matHeaderCellDef> Fecha </th>
+            <td mat-cell *matCellDef="let element"> {{element.evolucionFecha}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="descripcion">
+            <th mat-header-cell *matHeaderCellDef> Descripción </th>
+            <td mat-cell *matCellDef="let element"> {{element.evolucionDescripcion}} </td>
+            </ng-container>
+        
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                <td mat-cell *matCellDef="let element">
+                    <button mat-raised-button color="primary" (click)="editarEvolucion(element)">Editar</button>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsEvolucion"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsEvolucion;"></tr>
+        </table>
+    </div>
+</mat-dialog-content>
+

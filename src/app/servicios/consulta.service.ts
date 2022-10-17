@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { Ejercicio } from '../paginas/admin-ejercicios/ejercicio';
 import { Observable } from 'rxjs';
 import { Consulta, FotoConsulta } from '../paginas/consultas/consulta';
+import { FiltroConsulta } from '../paginas/consultas/buscar-consulta/buscar-consulta';
 
 const headerOauth = {
   headers: new  HttpHeaders()
@@ -21,6 +22,10 @@ export class ConsultasService {
 
   getConsultas():Observable<Consulta[]>{
     return this.http.get<Consulta[]>(this.urlService,headerOauth);
+  }
+
+  postConsultaPorFiltros(filtro:FiltroConsulta):Observable<Consulta[]>{
+    return this.http.post<Consulta[]>(this.urlService+'/Filtros',filtro,headerOauth)
   }
 
   getConsultaId(id: number):Observable<Consulta>{

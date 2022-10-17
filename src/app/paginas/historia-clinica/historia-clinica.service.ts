@@ -3,7 +3,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
 import { Observable } from 'rxjs';
-import { HistoriaClinicaConsulta, Lateralidad } from './historia-clinica';
+import { HistoriaClinicaConsulta, Lateralidad, FiltroHistoria } from './historia-clinica';
 
 const headerOauth = {
   headers: new  HttpHeaders()
@@ -21,6 +21,11 @@ export class HistoriaClinicaService {
   getHistorias():Observable<HistoriaClinicaConsulta[]>{
     return this.http.get<HistoriaClinicaConsulta[]>(this.urlService,headerOauth);
   }
+
+  postHistoriasFiltros(filtro:FiltroHistoria):Observable<HistoriaClinicaConsulta[]>{
+    return this.http.post<HistoriaClinicaConsulta[]>(this.urlService+'/Filtros',filtro,headerOauth);
+  }
+
 
   getHistoriaId(id: number):Observable<HistoriaClinicaConsulta>{
     return this.http.get<HistoriaClinicaConsulta>(this.urlService+"/"+id,headerOauth);

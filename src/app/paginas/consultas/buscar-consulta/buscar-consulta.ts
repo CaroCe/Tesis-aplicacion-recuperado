@@ -13,3 +13,10 @@ export interface ConsultaBuscador {
     examinacionInspeccion:  string;
     diagnostico:            string;
 }
+
+export interface FiltroConsulta {
+    fechaDesde?: Date;
+    fechaHasta?: Date;
+    pacienteId?: number;
+    problema?:   string;
+}

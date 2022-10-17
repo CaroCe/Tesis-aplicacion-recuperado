@@ -1,0 +1,34 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Diagnóstico</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        
+            <ng-template matStepLabel>Evolución</ng-template>
+            <div style="margin-bottom: 15px;">
+                <button mat-raised-button color="accent" (click)="agregarEvolucion()"><mat-icon>add</mat-icon>Agregar evolución</button>
+            </div>
+            <table mat-table [dataSource]="dataSourceEvolucion" class="mat-elevation-z8" style="width: 100%;">
+
+                <ng-container matColumnDef="fecha">
+                  <th mat-header-cell *matHeaderCellDef> Fecha </th>
+                  <td mat-cell *matCellDef="let element"> {{element.fecha}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="descripcion">
+                  <th mat-header-cell *matHeaderCellDef> Descripción </th>
+                  <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+                </ng-container>
+            
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-raised-button color="primary">Editar</button>
+                    </td>
+                  </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsEvolucion"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumnsEvolucion;"></tr>
+              </table>
+        
+    </mat-card-content>
+</mat-card>

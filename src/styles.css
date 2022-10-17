@@ -21,3 +21,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   ::-webkit-scrollbar-thumb:hover {
     background:  rgba(37, 37, 37, 0.781); 
   }
+
+  .page-pdf{
+    width: 100%;
+    height: 90%;
+    padding: 20px;
+}
