@@ -31,6 +31,7 @@ import { DialogSeguimiento, SeguimientoComponent } from './paginas/seguimiento/s
 import { AdminForoComponent } from './paginas/admin-foro/admin-foro.component';
 import { ForoComponent } from './paginas/foro/foro.component';
 import { DialogVistaConsultaComponent } from './paginas/consultas/dialog-vista-consulta/dialog-vista-consulta.component';
+import { AgendarCitaAdminComponent, DialogAgendarCitaAdmin } from './paginas/citas/agendar-cita-admin/agendar-cita-admin.component';
 
 
 @NgModule({
@@ -64,7 +65,9 @@ import { DialogVistaConsultaComponent } from './paginas/consultas/dialog-vista-c
     DialogSeguimiento,
     AdminForoComponent,
     ForoComponent,
-    DialogVistaConsultaComponent
+    DialogVistaConsultaComponent,
+    AgendarCitaAdminComponent,
+    DialogAgendarCitaAdmin
   ],
   imports: [
     BrowserModule,

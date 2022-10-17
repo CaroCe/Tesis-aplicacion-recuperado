@@ -22,12 +22,9 @@
             
     </mat-card-content>
     <mat-card-actions style="text-align: center;">
-        <div *ngIf="data.id===0; else elseBlock">
+        <div>
             <button mat-raised-button color="primary" style="width: 80%;" (click)="guardarNuevo()">Agregar</button>
         </div>
-        <ng-template #elseBlock>
-            <button mat-raised-button color="primary" style="width: 80%;" (click)="guardarEdicion()">Guardar</button>
-        </ng-template>
         
     </mat-card-actions>
 </mat-card>

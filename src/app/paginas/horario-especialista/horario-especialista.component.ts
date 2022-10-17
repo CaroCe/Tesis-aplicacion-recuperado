@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { HorarioEspecialista, HorarioDia, HorarioTrabajo } from './horario-especialista';
+import { HorarioEspecialista, HorarioDia, HorarioTrabajo, HorarioPorEspecialista, HorarioTrabajoPorEspecialista } from './horario-especialista';
 import { HorarioService } from '../../servicios/horario.service';
 import { DialogGeneral } from '../dialog-general/dialog-general';
 
@@ -11,7 +11,7 @@ import { DialogGeneral } from '../dialog-general/dialog-general';
   styleUrls: ['./horario-especialista.component.css']
 })
 export class HorarioEspecialistaComponent implements OnInit {
-  horarioDias: HorarioDia[]=[];
+  horarioDias: HorarioPorEspecialista[]=[];
   horarioLunes:HorarioDia[]=[
    /* {
       id:1,
@@ -42,23 +42,28 @@ export class HorarioEspecialistaComponent implements OnInit {
    }
 
   cargarHorarios(){
-    this._htppHorarioService.getHorariosDias().subscribe(resp=>{
+    this._htppHorarioService.getHorarioEspecialistaUsuarios(Number(localStorage.getItem('userId'))).subscribe(resp=>{
       this.horarioDias=resp
     })
   }
-  nuevoHorario(dia: HorarioDia){
+  nuevoHorario(id:number){
+    let item:HorarioTrabajoPorEspecialista ={
+      horaDesde:'00:00',
+      horaHasta:'00:00',
+      id:0
+    }
     const dialogRef = this.dialog.open(DialogHorario, {
       width: '400px',
-      data: {trabajoId:0,datos:dia}
+      data: {trabajoId:0,datos:item,id:id}
     });
     dialogRef.afterClosed().subscribe(result => {
       this.cargarHorarios();
     }); 
   }
-  editarHorario(horario:HorarioTrabajo){
+  editarHorario(horario:HorarioTrabajoPorEspecialista,id:number){
     const dialogRef = this.dialog.open(DialogHorario, {
       width: '400px',
-      data: {trabajoId:horario.horarioTrabajoId,datos:horario}
+      data: {trabajoId:horario.id,datos:horario,id:id}
     });
     dialogRef.afterClosed().subscribe(result => {
      this.cargarHorarios();
@@ -97,38 +102,55 @@ export class DialogHorario{
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder, public dialog: MatDialog,private _htppHorarioService:HorarioService){
       this.horarioForm = fb.group({
-        horarioDesde:   new FormControl('00:00'),
-        horarioHasta:  new FormControl('00:00'),
+        horarioDesde:   new FormControl(data.datos.horaDesde),
+        horarioHasta:  new FormControl(data.datos.horaHasta),
       })
   }
 
   guardarNuevo(){
     let datos:HorarioTrabajo={
-      horarioTrabajoId: this.data.id,
-      horarioId: this.data.horarioId,
+      horarioTrabajoId: this.data.trabajoId,
       horarioTrabajoDesde: this.horarioForm.value.horarioDesde,
       horarioTrabajoHasta: this.horarioForm.value.horarioHasta
     }
-    if(this.data.id==0){
+    if(this.data.trabajoId==0){
       this._htppHorarioService.postHorarioTrabajo(datos).subscribe(resp=> {
+        datos = resp;
+        let hEsp:HorarioEspecialista ={
+          especialistaId:Number(localStorage.getItem('userId')),
+          horarioId:this.data.id,
+          horarioTrabajoId:datos.horarioTrabajoId,
+          horarioEspecialistaId:0,
+          horarioEspecialistaEstado:true
+        }
+        this._htppHorarioService.postHorarioEspecialista(hEsp).subscribe(r=>{
+
+        });
         const dialogRef = this.dialog.open(DialogGeneral, {
           width: '400px',
           data: {
             mensaje:'Horario creado exitosamente'
           }
         });
+        dialogRef.afterClosed().subscribe(result => {
+          this.dialogRef.close();
+        }); 
       })
     }else{
-      this._htppHorarioService.putHorarioTrabajo(datos,this.data.id).subscribe(resp=>{
+
+
+      this._htppHorarioService.putHorarioTrabajo(datos,this.data.trabajoId).subscribe(resp=>{
+        this.dialogRef.close();
         const dialogRef = this.dialog.open(DialogGeneral, {
           width: '400px',
           data: {
             mensaje:'Horario editado exitosamente'
           }
         });
+        dialogRef.afterClosed().subscribe(result => {
+          this.dialogRef.close();
+        }); 
       })
     }
   }
-
-  guardarEdicion(){}
 }

@@ -22,3 +22,4 @@ export interface FiltroUsuarios {
     sede:   number;
     rol:    number;
 }
+

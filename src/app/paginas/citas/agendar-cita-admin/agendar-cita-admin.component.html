@@ -34,6 +34,15 @@
                         </mat-select>
                       </mat-form-field>
                 </mat-grid-tile>
+                <mat-grid-tile colspan="2">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Paciente</mat-label>
+                        <mat-select formControlName="pacienteId">
+                          <mat-option value="0" disabled="true" selected>Seleccione un paciente</mat-option>
+                          <mat-option *ngFor="let paciente of listaPacientes" [value]="paciente.usuarioId">{{paciente.usuarioNombre}} </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                </mat-grid-tile>
                 <mat-grid-tile>
                     <div style="width: 100%;height: 70%; text-align: center;">
                         <button mat-raised-button color="accent" (click)="buscar()">Ver horarios</button>
