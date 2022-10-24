@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ChatComponent } from './chat/chat.component';
 import { AdminEjerciciosComponent } from './paginas/admin-ejercicios/admin-ejercicios.component';
 import { AdminForoComponent } from './paginas/admin-foro/admin-foro.component';
 import { AdminSedesComponent } from './paginas/admin-sedes/admin-sedes.component';
@@ -21,6 +22,11 @@ import { TratamientoCasaComponent } from './paginas/tratamiento-casa/tratamiento
 import { TratamientoComponent } from './paginas/tratamiento/tratamiento.component';
 
 const routes: Routes = [{
+  path: 'chat',
+  component: ChatComponent,
+  canActivate: [NoAuthGuard],
+  canActivateChild: [NoAuthGuard]
+},{
   path: 'login',
   component: LoginComponent,
   canActivate: [NoAuthGuard],
