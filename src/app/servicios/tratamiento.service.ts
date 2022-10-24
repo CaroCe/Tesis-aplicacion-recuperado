@@ -26,6 +26,9 @@ export class TratamientoService {
   getTratamientosPorConsulta(id:number):Observable<FaseTratamiento[]>{
     return this.http.get<FaseTratamiento[]>(this.urlService+'/PorConsulta/'+id,headerOauth);
   }
+  getTratamientosPorUsuario(id:number):Observable<FaseTratamiento[]>{
+    return this.http.get<FaseTratamiento[]>(this.urlService+'/PorPaciente/'+id,headerOauth);
+  }
 
   getTratamientoId(id: number):Observable<FaseTratamiento>{
     return this.http.get<FaseTratamiento>(this.urlService+"/"+id,headerOauth);

@@ -4,6 +4,8 @@ import { EspecialistaService } from 'src/app/servicios/especialista.service';
 import { Usuario } from '../../users/user';
 import { CitasService } from '../citas.service';
 import { CitaAdmin } from '../mis-citas/citas';
+import { UserService } from '../../login/user.service';
+import { UsuariosService } from 'src/app/servicios/usuarios.service';
 
 @Component({
   selector: 'app-administracion-citas',
@@ -25,13 +27,13 @@ export class AdministracionCitasComponent implements OnInit {
   especialistaId = new FormControl(0);
   pacienteId = new FormControl(0);
   estado = new FormControl(5);
-  constructor(private _httpEspecialistaService:EspecialistaService,private _httpCita:CitasService) {
+  constructor(private _httpEspecialistaService:EspecialistaService,private _httpCita:CitasService, private _httpUsuarioService:UsuariosService) {
     
     _httpEspecialistaService.getEspecialistas().subscribe(esp=>{
       this.listaEspecialistas = esp;
     });
 
-    _httpEspecialistaService.getPacientes().subscribe(pas=>{
+    _httpUsuarioService.getUsuarios().subscribe(pas=>{
       this.listaPacientes = pas;
     });
   }

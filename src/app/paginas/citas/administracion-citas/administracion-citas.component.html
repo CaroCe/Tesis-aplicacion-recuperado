@@ -31,7 +31,12 @@
                     <mat-select [formControl]="pacienteId">
                       <mat-option value="0" disabled="true" selected>Seleccione un Paciente</mat-option>
                       <mat-option value="0">Todos</mat-option>
-                      <mat-option *ngFor="let paciente of listaPacientes" [value]="paciente.usuarioId">{{paciente.usuarioNombre}} </mat-option>
+                        <ng-container *ngFor="let item of listaPacientes">
+                          <mat-option *ngIf="item.rolId==2" [value]="item.usuarioId">
+                              {{item.usuarioNombre}}
+                          </mat-option>
+                        </ng-container>
+                      
                     </mat-select>
                   </mat-form-field>
             </mat-grid-tile>

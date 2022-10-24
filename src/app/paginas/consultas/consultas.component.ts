@@ -51,6 +51,7 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
   observacion = new FormControl('');
   inspeccion = new FormControl('');
   diagnostico = new FormControl('');
+  pacienteNombre:string="";
 
   constructor(private _formBuilder: FormBuilder, private dialog: MatDialog, private _httpUsuarioService: UsuariosService, private _httpConsulta:ConsultasService) {
     this._httpUsuarioService.getUsuarios().subscribe(resp => { this.usuarios = resp });
@@ -87,6 +88,7 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
   crearConulta(item: Usuario) {
     
     this.pacId = item.usuarioId;
+    this.pacienteNombre=item.usuarioNombre;
     this.historiaId = item.historiaId??0;
   }
   guardarEsquema() {
@@ -150,6 +152,7 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
       consultaProblema:this.problema.value??'',
       especialistaId:Number(localStorage.getItem('userId')),
       historiaId:this.historiaId,
+      pacienteNombre:this.pacienteNombre
     }
     this._httpConsulta.postCrearConsulta(itemConsulta).subscribe(respuestaId=>{
       this.consultaId = respuestaId;

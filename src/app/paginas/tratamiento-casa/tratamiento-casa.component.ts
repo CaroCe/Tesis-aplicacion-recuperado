@@ -1,10 +1,12 @@
 import { Component, Inject, OnInit, Pipe, PipeTransform  } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FaseTratamiento, EjercicioTratamiento } from '../tratamiento/tratamiento';
 import { TratamientoService } from '../../servicios/tratamiento.service';
 import { DomSanitizer, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
 import { DialogGeneral } from '../dialog-general/dialog-general';
+import { UsuariosService } from 'src/app/servicios/usuarios.service';
+import { Usuario } from '../users/user';
 
 @Component({
   selector: 'app-tratamiento-casa',
@@ -12,6 +14,11 @@ import { DialogGeneral } from '../dialog-general/dialog-general';
   styleUrls: ['./tratamiento-casa.component.css']
 })
 export class TratamientoCasaComponent implements OnInit {
+  usuarioId:number=Number(localStorage.getItem("userId"));
+  rolId:number=0;
+  pacienteId = new FormControl(0);
+  
+  listaPacientes: Usuario[] = [];
   datosTratamiento: FaseTratamiento={
     tratamientoId:0,
     consultaId:0,
@@ -36,8 +43,16 @@ export class TratamientoCasaComponent implements OnInit {
   ];
   listaTratamientos:FaseTratamiento[]=[];
   constructor(private dialog:MatDialog,
-    private _httpTratamientoService: TratamientoService,) { 
+    private _httpTratamientoService: TratamientoService,private _httpUsuarioService:UsuariosService) { 
+      
+    _httpUsuarioService.getUsuarios().subscribe(pas=>{
+      this.listaPacientes = pas;
+    });
+      _httpUsuarioService.getUsuarioId(Number(this.usuarioId)).subscribe(resp=>{
+        this.pacienteId.patchValue(this.usuarioId)
+        this.rolId=resp.rolId
       this.cargarTratamiento();
+      })
     }
 
   ngOnInit(): void {
@@ -47,7 +62,7 @@ export class TratamientoCasaComponent implements OnInit {
       /*_httpTratamientoService.getTratamientoId(1).subscribe(resp=>{
         this.datosTratamiento=resp;
       });*/
-    this._httpTratamientoService.getTratamientosPorConsulta(4).subscribe(resp=>{
+    this._httpTratamientoService.getTratamientosPorUsuario(Number(this.pacienteId.value)).subscribe(resp=>{
         this.listaTratamientos=resp
       })
   }
