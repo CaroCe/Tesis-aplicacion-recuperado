@@ -38,6 +38,7 @@ import { DialogEditarEvolucionComponent } from './paginas/consultas/dialog-edita
 import { DialogGeneralErrorComponent } from './paginas/dialog-general-error/dialog-general-error.component';
 import { DialogLoginForoComponent } from './paginas/foro/dialog-login-foro/dialog-login-foro.component';
 import { AgendarCitaAdminComponent, DialogAgendarCitaAdmin } from './paginas/citas/agendar-cita-admin/agendar-cita-admin.component';
+import { ChatComponent } from './chat/chat.component';
 
 
 @NgModule({
@@ -85,7 +86,8 @@ import { AgendarCitaAdminComponent, DialogAgendarCitaAdmin } from './paginas/cit
     DialogForoFase,
     DialogLoginForoComponent,
     AgendarCitaAdminComponent,
-    DialogAgendarCitaAdmin
+    DialogAgendarCitaAdmin,
+    ChatComponent
   ],
   imports: [
     BrowserModule,
