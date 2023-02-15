@@ -51,21 +51,23 @@
               <mat-grid-tile colspan="2">
                 <mat-form-field appearance="outline">
                   <mat-label>Nombre completo</mat-label>
-                  <input matInput type="nombre" placeholder="" formControlName="nombre">
+                  <input matInput type="nombre" placeholder="" formControlName="nombre" required>
                   <mat-icon matSuffix>person</mat-icon>
+                  <mat-error *ngIf="formReg.controls.nombre.hasError('required')">Campo obligatorio*</mat-error>
                 </mat-form-field>
               </mat-grid-tile>
               <mat-grid-tile colspan="1">
                 <mat-form-field appearance="outline">
                   <mat-label>Cédula</mat-label>
-                  <input matInput type="nombre" placeholder="" formControlName="cedula">
+                  <input matInput type="text" placeholder="" formControlName="cedula" maxlength="10" onkeypress="return event.charCode >= 48 && event.charCode <=57" required>
                   <mat-icon matSuffix>badge</mat-icon>
+                  <mat-error *ngIf="formReg.controls.cedula.hasError('required')">Campo obligatorio*</mat-error>
                 </mat-form-field>
               </mat-grid-tile>
               <mat-grid-tile colspan="1">
                 <mat-form-field appearance="outline">
                   <mat-label>Fecha nacimiento</mat-label>
-                  <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento">
+                  <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento" required>
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
@@ -73,36 +75,42 @@
               <mat-grid-tile colspan="2">
                 <mat-form-field appearance="outline">
                   <mat-label>Teléfono</mat-label>
-                  <input matInput type="nombre" placeholder="" formControlName="telefono">
+                  <input matInput type="text" placeholder=""  formControlName="telefono" maxlength="13" onkeypress="return event.charCode >= 48 && event.charCode <=57" required>
                   <mat-icon matSuffix>call</mat-icon>
+                  <mat-error *ngIf="formReg.controls.telefono.hasError('required')">Campo obligatorio*</mat-error>
                 </mat-form-field>
               </mat-grid-tile>
               <mat-grid-tile colspan="2">
                 <mat-form-field appearance="outline">
                   <mat-label>Domicilio</mat-label>
-                  <input matInput type="nombre" placeholder="" formControlName="domicilio">
+                  <input matInput type="text" placeholder="" formControlName="domicilio" required>
                   <mat-icon matSuffix>location_pin</mat-icon>
+                  <mat-error *ngIf="formReg.controls.domicilio.hasError('required')">Campo obligatorio*</mat-error>
                 </mat-form-field>
               </mat-grid-tile>
               <mat-grid-tile colspan="2">
                 <mat-form-field appearance="outline">
                   <mat-label>Correo electrónico</mat-label>
-                  <input matInput type="email" placeholder="" formControlName="email">
+                  <input matInput type="email" placeholder="" formControlName="email" required [errorStateMatcher]="matcher">
                   <mat-icon matSuffix>email</mat-icon>
+                  <mat-error *ngIf="formReg.controls.email.hasError('email')">El campo ingresado no es un correo</mat-error>
+                  <mat-error *ngIf="formReg.controls.email.hasError('required')">Campo obligatorio*</mat-error>
                 </mat-form-field>
               </mat-grid-tile>
               <mat-grid-tile colspan="1">
                 <mat-form-field appearance="outline">
                   <mat-label>Contraseña</mat-label>
-                  <input matInput type="password" placeholder="**********" formControlName="password">
+                  <input matInput type="password" placeholder="**********" formControlName="password" required>
                   <mat-icon matSuffix>password</mat-icon>
+                  <mat-error *ngIf="formReg.controls.password.hasError('required')">Campo obligatorio*</mat-error>
                 </mat-form-field>
               </mat-grid-tile>
               <mat-grid-tile colspan="1">
                 <mat-form-field appearance="outline">
                   <mat-label>Confirmar Contraseña</mat-label>
-                  <input matInput type="confirmPassword" placeholder="**********" formControlName="password">
+                  <input matInput type="password" placeholder="**********" formControlName="confirmPassword" required>
                   <mat-icon matSuffix>password</mat-icon>
+                  <mat-error *ngIf="formReg.controls.confirmPassword.hasError('required')">Campo obligatorio*</mat-error>
                 </mat-form-field>
               </mat-grid-tile>
             </mat-grid-list>
@@ -117,6 +125,11 @@
             *ngIf="!loginForm">Ingreso</button>
           <button mat-raised-button color="primary" (click)="registrar()"
             *ngIf="!loginForm">Registrarse</button>
+            <br>
+            <div style="padding-top: 10px;">
+              <a href="/reseteo">Recuperar Contraseña</a>
+            </div>
+            
         </mat-card-actions>
       </mat-card>
     </div>

@@ -32,4 +32,8 @@ export class EjerciciosService {
     console.log(JSON.stringify(datos));
     return this.http.put(this.urlService+'/'+id,datos,headerOauth); 
   };
+
+  deleteEjercicio(id: number):Observable<any>{
+    return this.http.delete(this.urlService+'/'+id,headerOauth); 
+  };
 }

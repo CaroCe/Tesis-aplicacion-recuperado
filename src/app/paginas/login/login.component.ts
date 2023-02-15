@@ -4,10 +4,11 @@ import { AuthService } from './auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormGroupDirective, Validators, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRegistro } from './dialogs/dialog-registro/dialog-registro';
 import { EntRegistro } from './user.types';
+import { ErrorStateMatcher } from '@angular/material/core';
 
 
 
@@ -31,6 +32,8 @@ export class LoginComponent implements OnInit {
   imagen: string = environment.logoName;
   nombreEmpresa: string = environment.tituloApp;
   isLoadingResults = false;
+  controlEmail=new FormControl('',[Validators.email,Validators.required])
+  matcher = new MyErrorStateMatcher();
   formLogin = new FormGroup(
     {
       email:new FormControl('',Validators.required),
@@ -44,7 +47,7 @@ export class LoginComponent implements OnInit {
       fechaNacimiento:new FormControl(new Date,Validators.required),
       telefono:new FormControl('',Validators.required),
       domicilio:new FormControl('',Validators.required),
-      email:new FormControl('',Validators.required),
+      email:new FormControl('',[Validators.email,Validators.required]),
       password:new FormControl('',Validators.required),
       confirmPassword:new FormControl('',Validators.required)
     }
@@ -55,7 +58,7 @@ export class LoginComponent implements OnInit {
     private _authService: AuthService,
     private _router: Router,
     private formBuilder:FormBuilder,
-    public dialog: MatDialog
+    public dialog: MatDialog,private fb: FormBuilder
   ) {
     
   }
@@ -69,10 +72,10 @@ export class LoginComponent implements OnInit {
       {
         nombre:new FormControl('',Validators.required),
         cedula:new FormControl('',Validators.required),
-        fechaNacimiento:new FormControl(new Date,Validators.nullValidator),
+        fechaNacimiento:new FormControl(new Date,[Validators.nullValidator,Validators.required]),
         telefono:new FormControl('',Validators.required),
         domicilio:new FormControl('',Validators.required),
-        email:new FormControl('',Validators.required),
+        email:new FormControl('',[Validators.email,Validators.required]),
         password:new FormControl('',Validators.required),
         confirmPassword:new FormControl('',Validators.required)
       }
@@ -133,7 +136,7 @@ export class LoginComponent implements OnInit {
           fechaNacimiento:new FormControl(new Date,Validators.nullValidator),
           telefono:new FormControl('',Validators.required),
           domicilio:new FormControl('',Validators.required),
-          email:new FormControl('',Validators.required),
+          email:new FormControl('',[Validators.email,Validators.required]),
           password:new FormControl('',Validators.required),
           confirmPassword:new FormControl('',Validators.required)
         }
@@ -142,6 +145,7 @@ export class LoginComponent implements OnInit {
     });
   }
   registrar(){
+    this.formReg.markAllAsTouched()
     let itemRegistro:EntRegistro ={
       nombre:this.formReg.value.nombre?.toString(),
       cedula:this.formReg.value.cedula?.toString(),
@@ -151,18 +155,20 @@ export class LoginComponent implements OnInit {
       fechaNacimiento: this.formReg.value.fechaNacimiento??undefined,
       password:this.formReg.value.password?.toString(),
       id:0,
-      rolId:3
+      rolId:2
     }
-    if(itemRegistro.nombre != ''
+      console.log(this.formReg)
+   /* if(itemRegistro.nombre != ''
     && itemRegistro.email != ''
     && itemRegistro.cedula != ''
     && itemRegistro.password != ''
     && itemRegistro.domicilio != ''
-    ){
+    )*/if(this.formReg.valid){
       if(itemRegistro.password !== this.formReg.value.confirmPassword){
         alert("La contraseña y la confirmación no son iguales");
       }
       else{
+        
         this.http.postRegistro(itemRegistro).subscribe(
           c=>{
             this.abrirConfirmacionRegistro();
@@ -212,4 +218,11 @@ export class LoginComponent implements OnInit {
         );
   }
 
+}
+
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const isSubmitted = form && form.submitted;
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+  }
 }

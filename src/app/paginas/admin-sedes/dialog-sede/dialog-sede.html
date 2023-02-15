@@ -14,7 +14,7 @@
                 <mat-grid-tile colspan="2" rowspan="2">
                     <mat-form-field appearance="outline">
                         <mat-label>Teléfono</mat-label>
-                        <input matInput formControlName="sedeTelefono">
+                        <input matInput type="text" formControlName="sedeTelefono" maxlength="13" onkeypress="return event.charCode >= 48 && event.charCode <=57">
                     </mat-form-field>
                 </mat-grid-tile>
                 <mat-grid-tile colspan="2" rowspan="3">
@@ -24,7 +24,7 @@
                     </mat-form-field>
                 </mat-grid-tile>
                 <mat-grid-tile colspan="2" rowspan="3">
-                    <mat-slide-toggle class="example-margin" color="primary" formControlName="estado">
+                    <mat-slide-toggle class="example-margin" color="primary" formControlName="estado" [disabled]="data.id==0">
                         Estado
                       </mat-slide-toggle>
                 </mat-grid-tile>

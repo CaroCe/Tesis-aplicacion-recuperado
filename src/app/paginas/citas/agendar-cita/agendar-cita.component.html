@@ -8,7 +8,7 @@
                 <mat-grid-tile colspan="2">
                     <mat-form-field appearance="outline">
                         <mat-label>Ingrese fecha de la cita</mat-label>
-                        <mat-date-range-input [rangePicker]="picker">
+                        <mat-date-range-input [rangePicker]="picker" [min]="todayDate">
                             <input matStartDate placeholder="Start date" formControlName="fechaDesde">
                             <input matEndDate placeholder="End date" formControlName="fechaHasta">
                         </mat-date-range-input>
@@ -19,9 +19,11 @@
                 <mat-grid-tile colspan="2">
                     <mat-form-field appearance="outline">
                         <mat-label>Sede</mat-label>
-                        <mat-select formControlName="sedeId">
+                        <mat-select formControlName="sedeId" (valueChange)="filtrarPacientes($event)">
                           <mat-option value="0" disabled="true" selected>Seleccione una sede</mat-option>
-                          <mat-option *ngFor="let sede of listaSedes" [value]="sede.sedeId">{{sede.sedeNombre}} </mat-option>
+                          <ng-container *ngFor="let sede of listaSedes">
+                            <mat-option *ngIf="sede.sedeEstado" [value]="sede.sedeId">{{sede.sedeNombre}} </mat-option>
+                          </ng-container>
                         </mat-select>
                       </mat-form-field>
                 </mat-grid-tile>
@@ -30,7 +32,9 @@
                         <mat-label>Especialista</mat-label>
                         <mat-select formControlName="especialistaId">
                           <mat-option value="0" disabled="true" selected>Seleccione un especialista</mat-option>
-                          <mat-option *ngFor="let especialista of listaEspecialistas" [value]="especialista.usuarioId">{{especialista.usuarioNombre}} </mat-option>
+                          <ng-container  *ngFor="let especialista of listaEspecialistaFiltrada">
+                            <mat-option *ngIf="especialista.usuarioEstado" [value]="especialista.usuarioId">{{especialista.usuarioNombre}} </mat-option>
+                          </ng-container>
                         </mat-select>
                       </mat-form-field>
                 </mat-grid-tile>
@@ -59,10 +63,11 @@
                                     <button mat-raised-button 
                                     *ngFor="let item of dia.horarioCitas" 
                                     color="accent" 
-                                    style="width: 90%;height: 30px;margin-top: 5px;"
-                                    (click)="agendarCita(dia,item)" [disabled]="item.disponibles < 0"
+                                    [style]="obtenerEstilo(item.disponibles)"
+                                    (click)="agendarCita(dia,item)" [disabled]="item.disponibles == 0"
                                     >
-                                        {{item.horaCita}}
+                                    <p style="margin: 0;">{{item.horaCita}} - {{tiempoFinal(item.horaCita)}}</p>
+                                    <p *ngIf="item.disponibles>=0">Diponibles: {{item.disponibles}}</p>
                                     </button>
                                 </div>
                                 

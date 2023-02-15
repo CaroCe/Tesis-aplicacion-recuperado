@@ -1,21 +1,23 @@
 import { FaseTratamiento } from '../tratamiento/tratamiento';
 export interface Consulta {
-    consultaId?:             number;
-    especialistaId?:         number;
-    historiaId?:             number;
-    consultaFecha?:          Date;
-    consultaMotivo?:         string;
-    consultaDescripcion?:    string;
-    consultaImagen?:         string;
-    consultaDescripImagen?:  string;
-    consultaProblema?:       string;
-    examinacionObservacion?: string;
-    examinacionInspeccion?:  string;
-    diagnostico?:            string;
-    evolucions?:             Evolucion[];
-    fotosExaminacion?:      FotoConsulta[];
-    tratamientos?:           FaseTratamiento[];
-    pacienteNombre?:         string;
+    consultaId?:                number;
+    especialistaId?:            number;
+    historiaId?:                number;
+    consultaFecha?:             Date;
+    consultaMotivo?:            string;
+    consultaDescripcion?:       string;
+    consultaImagen?:            string;
+    consultaDescripImagen?:     string;
+    consultaProblema?:          string;
+    examinacionObservacion?:    string;
+    examinacionInspeccion?:     string;
+    diagnostico?:               string;
+    evolucions?:                Evolucion[];
+    fotosExaminacion?:          FotoConsulta[];
+    tratamientos?:              FaseTratamiento[];
+    pacienteNombre?:            string;
+    foroId?:                     number;
+    foroEstado?:                 boolean
 }
 export interface FotoConsulta {
     fotoExaminacionId:          number;

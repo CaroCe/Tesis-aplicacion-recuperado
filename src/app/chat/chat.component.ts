@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { environment } from '../../environments/environment.prod';
 
 @Component({
   selector: 'app-chat',
@@ -13,15 +14,17 @@ export class ChatComponent implements OnInit {
   public messageToSend = '';
   public joined = false;
   public conversation: string[] = [];
+  
+  private urlService: string = environment.apiUrl+'/mensajehub';
 
   private connection: HubConnection;
 
   constructor() {
     this.connection = new HubConnectionBuilder()
-      .withUrl('https://localhost:44329/mensajehub')
+      .withUrl(this.urlService)
       .build();
       this.connection.on("grupo1", message => this.newMessage(message));
-    this.connection.on("grupo3", message => this.newMessage(message));
+    //this.connection.on("grupo3", message => this.newMessage(message));
   }
 
   ngOnInit(): void {

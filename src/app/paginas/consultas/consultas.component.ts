@@ -93,7 +93,12 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
   }
   guardarEsquema() {
     this.imagenEsquema = this.canvas.nativeElement.toDataURL();
-    
+    const dialogRef = this.dialog.open(DialogGeneral, {
+      width: '400px',
+      data: {
+        mensaje:'Imagen agregada'
+      }
+    });
   }
   ngAfterViewInit() {
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
@@ -505,7 +510,7 @@ export class DialogEjercicio {
         const dialogRef = this.dialog.open(DialogGeneral, {
           width: '400px',
           data: {
-            mensaje:'Ejercicio de Tratamiento agregado Correctamente'
+            mensaje:'Ejercicio de Tratamiento editado Correctamente'
           }
         });
       })

@@ -57,7 +57,9 @@
                                 <mat-label>Sede</mat-label>
                                 <mat-select [formControl]="sedeUsuario" >
                                     <mat-option value="0" disabled="true" selected>Seleccione una sede</mat-option>
-                                    <mat-option *ngFor="let sede of listaSedes" [value]="sede.sedeId">{{sede.sedeNombre}} </mat-option>
+                                    <ng-container *ngFor="let sede of listaSedes">
+                                        <mat-option *ngIf="sede.sedeEstado" [value]="sede.sedeId">{{sede.sedeNombre}} </mat-option>
+                                      </ng-container>
                                 <!--  <mat-error *ngIf="usuarioForm.hasError('required')" ></mat-error>-->
                                 </mat-select>
                                 <mat-icon matSuffix>business</mat-icon>

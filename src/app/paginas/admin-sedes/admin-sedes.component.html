@@ -49,6 +49,13 @@
                     <th mat-header-cell *matHeaderCellDef> Estado </th>
                     <td mat-cell *matCellDef="let element"> <mat-icon>{{element.sedeEstado?'done':'clear'}}</mat-icon></td>
                   </ng-container>
+
+                  <ng-container matColumnDef="accion">
+                    <th mat-header-cell *matHeaderCellDef> Acción </th>
+                    <td mat-cell *matCellDef="let element">
+                      <button mat-raised-button color="primary" (click)="editar(element)">Editar</button>
+                    </td>
+                  </ng-container>
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
               </table>

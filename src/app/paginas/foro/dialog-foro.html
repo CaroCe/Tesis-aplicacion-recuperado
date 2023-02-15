@@ -101,15 +101,15 @@
         <div>
             <form [formGroup]="form">
                     <mat-form-field appearance="outline">
-                        <mat-label>Comentario:</mat-label>
-                        <textarea matInput type="text" formControlName="comentario" rows="2"></textarea>
+                        <mat-label><strong> Comentario:</strong></mat-label>
+                        <textarea matInput type="text" formControlName="comentario" rows="4"></textarea>
                     </mat-form-field>
                 <div style="text-align: right;">
                     <button mat-raised-button color="primary" (click)="guardarComentario()">Comentar</button>
                 </div>
             </form>
         </div>
-        <div style="width: 100%;height: 200px">
+        <div style="width: 100%;height: 200px" hidden>
             <mat-card class="card-comentario" style="float: right;">
                 <mat-card-title-group>
                     <mat-card-title>{{usuario}}</mat-card-title>
@@ -117,7 +117,7 @@
                     <img mat-card-sm-image src="assets/sin-perfil.jpg" style="border-radius: 50px;width: 15%; height: 15%;">
                 </mat-card-title-group>
                 <mat-card-content >
-                    <div >{{usuario}} este es un ejemplo de comentario para ver cmo se visualiza</div>
+                    <div >{{usuario}} </div>
                 </mat-card-content>
             </mat-card>
         </div>
@@ -126,25 +126,15 @@
     </mat-card-actions>
     <mat-card-footer>
         
-        <mat-card class="card-comentario">
+        <mat-card class="card-comentario" *ngFor="let item of listaComentarios">
             <mat-card-title-group>
-                <mat-card-title>{{usuario}}</mat-card-title>
-                <mat-card-subtitle>{{fecha}}</mat-card-subtitle>
+                <mat-card-title>{{item.usuario}}</mat-card-title>
                 <img mat-card-sm-image src="assets/sin-perfil.jpg" style="border-radius: 50px;width: 15%; height: 15%;">
             </mat-card-title-group>
             <mat-card-content>
-                <div >{{usuario}} este es un ejemplo de comentario para ver cmo se visualiza</div>
-            </mat-card-content>
-        </mat-card>
-        <mat-card class="card-comentario">
-            <mat-card-title-group>
-                <mat-card-title>{{usuario}}</mat-card-title>
-                <mat-card-subtitle>{{fecha}}</mat-card-subtitle>
-                <img mat-card-sm-image src="assets/sin-perfil.jpg" style="border-radius: 50px;width: 15%; height: 15%;">
-            </mat-card-title-group>
-            <mat-card-content>
-                <div >{{usuario}} este es un ejemplo de comentario para ver cmo se visualiza</div>
+                <div >{{item.comentarioForoMensaje}}</div>
             </mat-card-content>
         </mat-card>
     </mat-card-footer>
+    <hr>
 </mat-card>

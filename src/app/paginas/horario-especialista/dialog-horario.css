@@ -23,16 +23,16 @@ input[type=time] {
   
   /* Hour */
   input[type=time]::-webkit-datetime-edit-hour-field {
-    background-color: #f2f4f5;
-    border-radius: 15%;
-    padding: 19px 13px;
+    background-color: #7155d3;
+    border-radius: 10%;
+    padding: 20px;
   }
   
   /* Minute */
   input[type=time]::-webkit-datetime-edit-minute-field {
-    background-color: #f2f4f5;
-    border-radius: 15%;
-    padding: 19px 13px;
+    background-color: #7155d3;
+    border-radius: 10%;
+    padding: 20px;
   }
   
   /* AM/PM */

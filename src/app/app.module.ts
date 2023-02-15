@@ -39,6 +39,7 @@ import { DialogGeneralErrorComponent } from './paginas/dialog-general-error/dial
 import { DialogLoginForoComponent } from './paginas/foro/dialog-login-foro/dialog-login-foro.component';
 import { AgendarCitaAdminComponent, DialogAgendarCitaAdmin } from './paginas/citas/agendar-cita-admin/agendar-cita-admin.component';
 import { ChatComponent } from './chat/chat.component';
+import { ReseteoPasswordComponent } from './paginas/login/reseteo-password/reseteo-password.component';
 
 
 @NgModule({
@@ -87,7 +88,8 @@ import { ChatComponent } from './chat/chat.component';
     DialogLoginForoComponent,
     AgendarCitaAdminComponent,
     DialogAgendarCitaAdmin,
-    ChatComponent
+    ChatComponent,
+    ReseteoPasswordComponent
   ],
   imports: [
     BrowserModule,

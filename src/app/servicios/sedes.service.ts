@@ -18,11 +18,19 @@ export class SedesService {
 
   constructor(private http: HttpClient) { }
 
+  getSedeId(id:number):Observable<Sede>{
+    return this.http.get<Sede>(this.urlService+'/'+id,headerOauth)
+  }
+
   getSedes():Observable<any>{
     return this.http.get<any>(this.urlService,headerOauth)
   }
 
   postCrearSede(datos: Sede): Observable<any>{
     return this.http.post<any>(this.urlService, datos);
+  }
+
+  putEditarSede(datos: Sede): Observable<any>{
+    return this.http.put<any>(this.urlService+'/'+datos.sedeId, datos);
   }
 }

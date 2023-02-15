@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CitasService } from '../citas.service';
 import { Cita, CitaAdmin } from './citas';
+import { UsuariosService } from 'src/app/servicios/usuarios.service';
 
 @Component({
   selector: 'app-mis-citas',
@@ -8,19 +9,33 @@ import { Cita, CitaAdmin } from './citas';
   styleUrls: ['./mis-citas.component.css']
 })
 export class MisCitasComponent implements OnInit {
-  displayedColumns: string[] = ['fecha', 'estado', 'observacion', 'accion'];
+  displayedColumns: string[] = ['fecha', 'hora','especialista', 'paciente', 'observacion', 'estado', 'accion'];
   dataSource:CitaAdmin[] = [];
-  constructor(private _httpCita:CitasService) {
+  constructor(private _httpCita:CitasService,
+    private _httpUsuarioService: UsuariosService,) {
     let filtro = {
       fechaDesde: "2021-01-01",
       fechaHasta: "2050-12-31",
       especialistaId:0,
-      pacienteId:localStorage.getItem("userId"),
+      pacienteId:0,
       estado:5
     } 
-    this._httpCita.getCitas(filtro).subscribe(c=>{
-      this.dataSource = c;
+    let usuarioId=Number(localStorage.getItem("userId"))
+    this._httpUsuarioService.getUsuarioId(usuarioId).subscribe(resp=>{
+      if(resp.rolId==1){
+        filtro.especialistaId=usuarioId;
+        filtro.pacienteId=0
+      }else{
+        if(resp.rolId==2){
+          filtro.pacienteId=usuarioId;
+          filtro.especialistaId=0;
+        }
+      }
+      this._httpCita.getCitas(filtro).subscribe(c=>{
+        this.dataSource = c;
+      });
     });
+
   }
 
   ngOnInit(): void {

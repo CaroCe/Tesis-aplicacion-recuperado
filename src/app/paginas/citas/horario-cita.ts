@@ -24,9 +24,12 @@ export interface FiltroCitas {
     fechaHasta:     Date;
 }
 export interface CitaPost {
+    diaId?:     number;
     citaId:     number;
     usuarioId:  number;
+    especialistaId: number;
     citaFecha:  Date;
     citaHora:   string;
     citaEstado: number;
+    citaObservacion: string
 }

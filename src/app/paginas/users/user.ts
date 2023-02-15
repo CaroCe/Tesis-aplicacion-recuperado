@@ -6,7 +6,7 @@ export interface Usuario {
     sedeId:                 number;
     usuarioNombre:          string;
     usuarioIdentificacion:  string;
-    usuarioFechaNacimiento: Date;
+    usuarioFechaNacimiento: Date|undefined;
     usuarioDireccion:       string;
     usuarioTelefono:        string;
     usuarioCorreo:          string;
@@ -15,6 +15,7 @@ export interface Usuario {
     historiaId?:             number;
     usuarioEstado:           boolean;
     fecha:                   string;
+    password?:        string;
 }
 export interface FiltroUsuarios {
     nombre: string;

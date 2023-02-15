@@ -8,6 +8,9 @@ import { FaseTratamiento, EjercicioTratamiento, TratamientoDia } from '../tratam
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogGeneral } from '../dialog-general/dialog-general';
 import { TratamientoDias } from '../tratamiento-casa/tratamiento-casa';
+import { Foro, filtroForo } from '../foro/foro.interface';
+import { ForoService } from '../../servicios/foro.service';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-admin-foro',
@@ -19,12 +22,14 @@ export class AdminForoComponent implements OnInit {
   formFiltro:FormGroup;
   fechaDesde = new Date('January 1 2022');
   displayedColumns: string[] = ['problema', 'diagnostico', 'fases', 'foro'];
-  dataSource: Consulta[] = [];
+ // dataSource: Consulta[] = [];
+  dataSource = new MatTableDataSource<Foro>;
   datosFases: FaseTratamiento[]=[];
   constructor(private formBuilder:FormBuilder,
     private _httpConsultaService:ConsultasService,
     private _httpTratamientoService: TratamientoService,
-    public dialog:MatDialog) {
+    public dialog:MatDialog,
+    private _httpForoService: ForoService) {
     this.formFiltro=formBuilder.group({
       pacienteId: new FormControl(0),
       fechaDesde: new FormControl(new Date(this.fechaDesde)),
@@ -40,14 +45,25 @@ export class AdminForoComponent implements OnInit {
     this.cargarConsultas()
   }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
   cargarConsultas(){
-    let filtro:FiltroConsulta={
+    let filtro:filtroForo={
       fechaDesde: this.formFiltro.value.fechaDesde,
       fechaHasta: this.formFiltro.value.fechaHasta,
       pacienteId: 0,
-      problema: this.formFiltro.value.problema
+      problema: '',
+      especialistaId:0,
+      estado:1
     }
-    this._httpConsultaService.postConsultaPorFiltros(filtro).subscribe(resp=>{
+
+    this._httpForoService.postConsultarForos(filtro).subscribe(resp=>{
+      this.dataSource.data=resp;
+    })
+    /*this._httpConsultaService.postConsultaPorFiltros(filtro).subscribe(resp=>{
       this.dataSource=resp;
       resp.forEach((element,i) => {
         this._httpTratamientoService.getTratamientosPorConsulta(Number(element.consultaId)).subscribe(respTratamientos=>{
@@ -55,7 +71,7 @@ export class AdminForoComponent implements OnInit {
         })
         
       });
-    })
+    })*/
 
   }
 
@@ -73,6 +89,19 @@ export class AdminForoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       
     }); 
+  }
+
+  activarForo(element: Consulta){
+    
+    this._httpForoService.getCambiaEstadoForo(Number(element.consultaId), !element.foroEstado).subscribe(resp => {
+      this.cargarConsultas();
+      const dialogRef = this.dialog.open(DialogGeneral, {
+        width: '400px',
+        data: {
+          mensaje:'Operación Exitosa'
+        }
+      });
+    });
   }
 
 }

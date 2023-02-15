@@ -13,6 +13,7 @@ import { Rol } from '../../users/rol';
 import { Usuario } from '../../users/user';
 import { CitasService } from '../citas.service';
 import { CitaPost, FiltroCitas, HorarioCita, HorarioDisponibleCita } from '../horario-cita';
+import { UsuariosService } from '../../../servicios/usuarios.service';
 @Injectable()
 export class FiveDayRangeSelectionStrategy<D> implements MatDateRangeSelectionStrategy<D> {
   constructor(private _dateAdapter: DateAdapter<D>) { }
@@ -27,8 +28,8 @@ export class FiveDayRangeSelectionStrategy<D> implements MatDateRangeSelectionSt
 
   private _createFiveDayRange(date: D | null): DateRange<D> {
     if (date) {
-      const start = this._dateAdapter.addCalendarDays(date, -2);
-      const end = this._dateAdapter.addCalendarDays(date, 2);
+      const start = this._dateAdapter.addCalendarDays(date, 0);
+      const end = this._dateAdapter.addCalendarDays(date,4 );
       return new DateRange<D>(start, end);
     }
 
@@ -47,13 +48,22 @@ export class FiveDayRangeSelectionStrategy<D> implements MatDateRangeSelectionSt
   ],
 })
 export class AgendarCitaAdminComponent implements OnInit {
+  todayDate:Date = new Date();
   displayedColumns: string[] = ['fecha1', 'fecha2', 'fecha3', 'fecha4', 'fecha5'];
   dataSource:HorarioDisponibleCita[] = [];
   listaSedes: Sede[] = [];
   listaEspecialistas: Usuario[] = [];
+  listaEspecialistaFiltrada: Usuario[] = [];
   listaPacientes: Usuario[] = [];
   filtroForm: FormGroup;
-  constructor(private dialog:MatDialog,private fb: FormBuilder,private _httpCitas:CitasService,private _httpEspecialistaService: EspecialistaService, private _httpSedeService: SedesService) {
+  fecha: Date = new Date();
+  constructor(
+    private dialog:MatDialog,
+    private fb: FormBuilder,
+    private _httpCitas:CitasService,
+    private _httpEspecialistaService: EspecialistaService, 
+    private _httpSedeService: SedesService,
+    private _httpUsuarioService: UsuariosService) {
     this.filtroForm = fb.group({
       fechaDesde: new FormControl(Date.now()),
       fechaHasta: new FormControl(Date.now()),
@@ -68,43 +78,93 @@ export class AgendarCitaAdminComponent implements OnInit {
     _httpEspecialistaService.getEspecialistas().subscribe(esp=>{
       this.listaEspecialistas = esp;
     });
-    _httpEspecialistaService.getPacientes().subscribe(pas=>{
-      this.listaPacientes = pas;
+    _httpUsuarioService.getUsuarios().subscribe(pac=>{
+      this.listaPacientes = pac;
     });
+    console.log(this.fecha)
   }
 
   ngOnInit(): void {
+    console.log(this.fecha.getHours())
   }
+
+  filtrarPacientes(event:any){
+    this.listaEspecialistaFiltrada=this.listaEspecialistas.filter(element=>element.sedeId===event);
+  }
+
   buscar(){
-    if(this.filtroForm.value.pacienteId > 0){
-      let filtro: FiltroCitas ={
-        sedeId: this.filtroForm.value.sedeId,
-        especialistaId: this.filtroForm.value.especialistaId,
-        fechaDesde: this.filtroForm.value.fechaDesde,
-        fechaHasta: this.filtroForm.value.fechaHasta
+    if(this.filtroForm.value.sedeId > 0){
+      if(this.filtroForm.value.pacienteId>0){
+        let filtro: FiltroCitas ={
+          sedeId: this.filtroForm.value.sedeId,
+          especialistaId: this.filtroForm.value.especialistaId,
+          fechaDesde: this.filtroForm.value.fechaDesde,
+          fechaHasta: this.filtroForm.value.fechaHasta
+        }
+        this._httpCitas.getHorariosDisponibles(filtro).subscribe(c=>{
+          this.dataSource = c;
+        });
+      }else{
+        alert("Seleccione un paciente");
       }
-      this._httpCitas.getHorariosDisponibles(filtro).subscribe(c=>{
-        this.dataSource = c;
-      });
     }
     else{
-      alert("Seleccione un paciente");
+      alert("Seleccione una sede");
     }
     
   }
 
   agendarCita(dia:HorarioDisponibleCita,hora:HorarioCita){
+
+    let datosCita: CitaPost={
+      diaId:dia.horarioDiaId,
+      citaEstado:1,
+      citaFecha:dia.horarioDiaFecha,
+      usuarioId:this.filtroForm.value.pacienteId,
+      citaHora:hora.horaCita,
+      citaId:0,
+      especialistaId: this.filtroForm.value.especialistaId, 
+      citaObservacion: "Fecha: "+ dia.horarioDiaFecha.toString().substring(0,10) + " - Hora: "+hora.horaCita
+    }
     const dialogRef = this.dialog.open(DialogAgendarCitaAdmin, {
       width: '400px',
-      data: {
-        diaId:dia.horarioDiaId,hora:hora.horaCita,fecha:dia.horarioDiaFecha,pacienteId:this.filtroForm.value.pacienteId
-      }
+      data: datosCita
     });
     dialogRef.afterClosed().subscribe(result => {
       this.buscar();
     }); 
   }
 
+  tiempoFinal(tiempo:string){
+    let hora=tiempo.split(':');
+    let horaFin: string ='';
+    let num=Number(hora[0]);
+    horaFin=(num+1)+':0'
+
+    return horaFin;
+  }
+
+  bloquearHora(tiempo:string){
+
+    
+    let bloqueado: boolean=false;
+    let hora=tiempo.split(':');
+    let horaActual=Number(this.fecha.getHours());
+    console.log(horaActual,hora[0])
+    if(horaActual >= Number(hora[0])){
+      console.log('bloqueado')
+      bloqueado=true;
+    }
+    return bloqueado;
+  }
+
+  obtenerEstilo(disponible:number){
+    let style='width: 95%;height: 70px;margin-top: 5px;';
+    if(disponible<0){
+      style='width: 95%;height: 30px;margin-top: 5px;'
+    }
+    return style;
+  }
 }
 
 @Component({
@@ -114,8 +174,9 @@ export class AgendarCitaAdminComponent implements OnInit {
 export class DialogAgendarCitaAdmin {
   observacion = new FormControl();
   constructor(public dialogRef: MatDialogRef<DialogAgendarCitaAdmin>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: CitaPost,
     private formBuilder: FormBuilder,private dialog:MatDialog,private _httpCita:CitasService) {
+      this.observacion.patchValue(data.citaObservacion)
 
   }
   onSubmit(data: any) {
@@ -124,10 +185,12 @@ export class DialogAgendarCitaAdmin {
 
     let cita:CitaPost = {
       citaEstado:1,
-      citaFecha:this.data.fecha,
-      usuarioId:this.data.pacienteId,
-      citaHora:this.data.hora,
-      citaId:0
+      citaFecha:this.data.citaFecha,
+      usuarioId:this.data.usuarioId,
+      citaHora:this.data.citaHora,
+      citaId:0,
+      especialistaId: this.data.especialistaId, 
+      citaObservacion: this.observacion.value
     }
     this._httpCita.postCita(cita).subscribe(c=>{
       

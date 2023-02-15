@@ -6,8 +6,12 @@ import { Consulta } from '../consultas/consulta';
 import { TratamientoService } from '../../servicios/tratamiento.service';
 import { FaseTratamiento } from '../tratamiento/tratamiento';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { comentarioForo } from './foro.interface';
+import { comentarioForo, filtroForo, Foro } from './foro.interface';
 import { Usuario } from '../users/user';
+import { environment } from '../../../environments/environment';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { ForoService } from '../../servicios/foro.service';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-foro',
@@ -19,11 +23,13 @@ export class ForoComponent implements OnInit {
   formFiltro:FormGroup;
   fechaDesde = new Date('January 1 2022');
   displayedColumns: string[] = ['problema', 'diagnostico', 'accion'];
-  dataSource: Consulta[] = [];
+  listaForo: Foro[]=[];
+  dataSource = new MatTableDataSource<Foro>;
   datosFases: FaseTratamiento[]=[];
   constructor(private formBuilder:FormBuilder,
     private _httpConsultaService:ConsultasService,
     private _httpTratamientoService: TratamientoService,
+    private _httpForoService: ForoService,
     private dialog:MatDialog, ) {
     this.formFiltro=formBuilder.group({
       pacienteId: new FormControl(0),
@@ -37,29 +43,32 @@ export class ForoComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    this.cargarConsultas()
+    this.cargarForos()
   }
 
-  cargarConsultas(){
-    let filtro:FiltroConsulta={
-      fechaDesde: this.formFiltro.value.fechaDesde,
-      fechaHasta: this.formFiltro.value.fechaHasta,
+  cargarForos(){
+    let filtro:filtroForo={
+      fechaDesde: new Date('January 1 2022'),
+      fechaHasta: new Date(),
       pacienteId: 0,
-      problema: this.formFiltro.value.problema
+      problema: "",
+      estado: 1,
+      especialistaId:0
     }
-    this._httpConsultaService.postConsultaPorFiltros(filtro).subscribe(resp=>{
-      this.dataSource=resp;
+    this._httpForoService.postConsultarForos(filtro).subscribe(resp=>{
+      this.listaForo=resp.filter(element=>element.foroEstado===true);
       resp.forEach((element,i) => {
         this._httpTratamientoService.getTratamientosPorConsulta(Number(element.consultaId)).subscribe(respTratamientos=>{
-          this.dataSource[i].tratamientos=respTratamientos;
+          this.listaForo[i].tratamientos=respTratamientos;
         })
         
       });
+      this.dataSource.data=this.listaForo;
     })
 
   }
 
-  abirForo(element:Consulta){
+  abirForo(element:Foro){
     const dialogRef = this.dialog.open(DialogForo,{
       width: '1500px',
       height:'1000px',
@@ -74,7 +83,7 @@ export class ForoComponent implements OnInit {
   templateUrl: './dialog-foro.html',
   styleUrls: ['./foro.component.css']
 })
-export class DialogForo {
+export class DialogForo implements OnInit{
   fasesTratamiento: FaseTratamiento[]=[];
   dataSource: any[]=[];
   displayedColumns:string[]=['dia','ejercicio','repeticion','series','descanso','observacion']
@@ -82,13 +91,21 @@ export class DialogForo {
   usuario="carolina"
   fecha= new Date();
 
-  listaComentarios: comentarioForo[]=[];
+  listaComentarios: comentarioForo[]=[];  
+  public messageToSend = '';
+  private urlService: string = environment.apiUrl+'mensajehub';
+  private connection: HubConnection;
   constructor(
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<DialogForo>,
-    @Inject(MAT_DIALOG_DATA) public data: Consulta,
+    @Inject(MAT_DIALOG_DATA) public data: Foro,
     private formBuilder: FormBuilder,
-    private _httpTratamientoService: TratamientoService) {
+    private _httpTratamientoService: TratamientoService,
+    private _httpForoService: ForoService) {
+      this.connection = new HubConnectionBuilder()
+      .withUrl(this.urlService)
+      .build();
+      this.connection.on("grupo1", message => this.cargarComentarios());
       this.dataSource.push(
         {item:'Descripción:',dato:data.consultaDescripcion},
         {item:'Dolor:',dato:data.consultaMotivo},
@@ -99,7 +116,25 @@ export class DialogForo {
       this.form=formBuilder.group({
         usuarioId: new FormControl(0),
         comentario: new FormControl('')
-      })
+      });
+  }
+
+  ngOnInit(): void {
+    this.cargarComentarios();
+    this.connection.start()
+      .then(_ => {
+        console.log('Connection Started');
+      }).catch(error => {
+        return console.error(error);
+      });
+  }
+
+  public sendMessage() {
+    this.connection.invoke('SendMessage', this.messageToSend)
+      .then(_ =>{
+        this.messageToSend = ''
+      }
+        );
   }
   onSubmit(data: any) {
   }
@@ -123,7 +158,21 @@ export class DialogForo {
   }
 
   guardarComentario(){
+    let comentario:comentarioForo={
+      usuarioId: Number(localStorage.getItem("userId")),
+      comentarioForoId:0,
+      comentarioForoMensaje:this.form.value.comentario,
+      foroId: this.data.foroId
+    }
+    this._httpForoService.postComentarioForo(comentario).subscribe(resp=>{
+      this.sendMessage();
+    })
+  }
 
+  cargarComentarios(){
+    this._httpForoService.getComentarios(this.data.foroId).subscribe(resp=>{
+      this.listaComentarios=resp
+    });
   }
 }
 

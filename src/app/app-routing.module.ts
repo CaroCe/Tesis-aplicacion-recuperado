@@ -20,6 +20,7 @@ import { NavComponent } from './paginas/nav/nav.component';
 import { SeguimientoComponent } from './paginas/seguimiento/seguimiento.component';
 import { TratamientoCasaComponent } from './paginas/tratamiento-casa/tratamiento-casa.component';
 import { TratamientoComponent } from './paginas/tratamiento/tratamiento.component';
+import { ReseteoPasswordComponent } from './paginas/login/reseteo-password/reseteo-password.component';
 
 const routes: Routes = [{
   path: 'chat',
@@ -31,6 +32,9 @@ const routes: Routes = [{
   component: LoginComponent,
   canActivate: [NoAuthGuard],
   canActivateChild: [NoAuthGuard]
+},{
+  path: 'reseteo',
+  component: ReseteoPasswordComponent,
 },
 {
   path: '',

@@ -9,7 +9,10 @@
                     <mat-form-field appearance="outline">
                         <mat-label>Ejercicio</mat-label>
                         <mat-select formControlName="ejercicioId">
-                            <mat-option [value]="item.ejercicioId" *ngFor="let item of listaEjercicios" (click)="ejercicioSeleccionado(item)">{{item.ejercicioNombre}}</mat-option>
+                            <ng-container *ngFor="let item of listaEjercicios">
+                                <mat-option [value]="item.ejercicioId"  (click)="ejercicioSeleccionado(item)">{{item.ejercicioNombre}}</mat-option>
+                              </ng-container>
+                            
                         </mat-select>
                     </mat-form-field>
                 </mat-grid-tile>
@@ -42,6 +45,6 @@
         </mat-grid-list>
     </mat-card-content>
     <mat-card-actions style="text-align: center;">
-        <button mat-raised-button color="primary" style="width: 90%;" (click)="guardar()">Agregar</button>
+        <button mat-raised-button color="primary" style="width: 90%;" (click)="guardar()">Guardar</button>
     </mat-card-actions>
 </mat-card>

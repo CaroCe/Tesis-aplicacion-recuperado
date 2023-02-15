@@ -24,6 +24,8 @@ export class BuscarConsultaComponent implements OnInit {
   datosConsulta: Consulta={};
   datosEvolucion: Evolucion[]=[];
   usuarios: Usuario[]=[];
+  fechaActual: Date = new Date();
+  
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),

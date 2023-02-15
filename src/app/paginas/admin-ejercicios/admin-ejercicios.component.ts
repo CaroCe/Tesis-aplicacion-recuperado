@@ -35,6 +35,12 @@ export class AdminEjerciciosComponent implements OnInit {
     this.urlGrafico = this.sanitizer.bypassSecurityTrustResourceUrl("");
   }
 
+  nuevo(){
+    this.ejercicioForm.reset();
+    this.ejercicioId=0;
+    this.urlGrafico=this.sanitizer.bypassSecurityTrustResourceUrl('');
+  }
+
   applyFilter(event: Event) {
     const filterValues = (event.target as HTMLInputElement).value;
     this.dataSource.filter=filterValues.trim().toLowerCase();
@@ -110,6 +116,11 @@ export class AdminEjerciciosComponent implements OnInit {
     this.urlGrafico = this.sanitizer.bypassSecurityTrustResourceUrl(item.ejercicioGrafico);
   }
 
+  eliminarEjercicio(id:number){
+    this._httpEjercicioService.deleteEjercicio(id).subscribe(resp=>{
+      this.cargarTabla();
+    })
+  }
   visualizarGrafico(event: any){
     this.urlGrafico = this.sanitizer.bypassSecurityTrustResourceUrl(event.target.value);
   }

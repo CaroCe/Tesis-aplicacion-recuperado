@@ -14,7 +14,7 @@ export class AdminSedesComponent implements OnInit {
   listaSedes:Sede[] =[];
   sedeForm: FormGroup;
 
-  displayedColumns:string[] =['nombre','ubicacion','telefono','horarioInicio','horarioFin','estado']
+  displayedColumns:string[] =['nombre','ubicacion','telefono','horarioInicio','horarioFin','estado','accion']
   constructor(private dialog:MatDialog, private fb: FormBuilder,private _httpSedeService:SedesService) { 
     this.sedeForm=this.fb.group({
       sedeNombre: new FormControl(''),
@@ -33,13 +33,21 @@ export class AdminSedesComponent implements OnInit {
     const dialogRef = this.dialog.open(DialogSede, {
       width: '500px',
       data: {
-        
+        id:0,
+        datos:{
+          sedeNombre: '',
+          sedeTelefono: '',
+          sedeDireccion: '',
+          sedeHoraDesde: '',
+          sedeHoraHasta: '',
+          sedeEstado: true,
+        }
       }
     });
 
     dialogRef.componentInstance.respuesta.subscribe((result)=>{
-      dialogRef.close();
       this.cargarTabla();
+      dialogRef.close();
     });
   }
 
@@ -47,5 +55,20 @@ export class AdminSedesComponent implements OnInit {
     this._httpSedeService.getSedes().subscribe(resp => {
       this.listaSedes=resp
     })
+  }
+
+  editar(sede:Sede){
+    const dialogRef = this.dialog.open(DialogSede, {
+      width: '500px',
+      data: {
+        id:sede.sedeId,
+        datos:sede
+      }
+    });
+
+    dialogRef.componentInstance.respuesta.subscribe((result)=>{
+      this.cargarTabla();
+      dialogRef.close();
+    });
   }
 }

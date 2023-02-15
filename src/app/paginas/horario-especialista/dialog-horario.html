@@ -3,22 +3,32 @@
         <mat-card-title>Agregar horario</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <form action="" [formGroup]="horarioForm">
-            <mat-grid-list cols="2" rowHeight="50">
-                <mat-grid-tile>
-                    <h2>Hora inicio</h2>
-                </mat-grid-tile>
-                <mat-grid-tile>
-                    <h2>Hora fin</h2>
-                </mat-grid-tile>
-                <mat-grid-tile>
-                    <input type="time" formControlName="horarioDesde">
-                </mat-grid-tile>
-                <mat-grid-tile>
-                    <input type="time" formControlName="horarioHasta">
-                </mat-grid-tile>
-            </mat-grid-list>
-        </form>
+        <div class="row">
+            <form action="" [formGroup]="horarioForm">
+                <mat-grid-list cols="2" rowHeight="50">
+                    <mat-grid-tile>
+                        <h2>Hora inicio</h2>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <h2>Hora fin</h2>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" style="color: black !important;">
+                            <input style="color: black !important;" matInput type="time" formControlName="horarioDesde" [value]="data.horaDesde" [min]="data.horaDesde+':00'" [max]="data.horaHasta+':00'" (keyup)="verificarHorarioDesde($event)" required>
+                            <mat-error *ngIf="horarioForm.controls.horarioDesde.hasError('min')">Campo obligatorio*</mat-error>
+                        </mat-form-field>
+                        
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                        <mat-form-field appearance="outline" style="color: black !important;">
+                            <input style="color: black !important;" matInput type="time" formControlName="horarioHasta" [min]="horarioForm.value.horarioDesde" [max]="data.horaHasta+':00'" (keyup)="verificarHorarioHasta($event)" required>
+                        </mat-form-field>
+                        
+                    </mat-grid-tile>
+                </mat-grid-list>
+            </form>
+        </div>
+        
             
     </mat-card-content>
     <mat-card-actions style="text-align: center;">
