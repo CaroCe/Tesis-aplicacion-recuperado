@@ -4,6 +4,8 @@ import { DialogSede } from './dialog-sede/dialog-sede';
 import { Sede } from './sede';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { SedesService } from '../../servicios/sedes.service';
+import { DialogGeneral } from '../dialog-general/dialog-general';
+import { DialogError } from '../dialog-general-error/dialog-error';
 
 @Component({
   selector: 'app-admin-sedes',
@@ -11,6 +13,7 @@ import { SedesService } from '../../servicios/sedes.service';
   styleUrls: ['./admin-sedes.component.css']
 })
 export class AdminSedesComponent implements OnInit {
+  isLoadingResults:boolean=false;
   listaSedes:Sede[] =[];
   sedeForm: FormGroup;
 
@@ -53,7 +56,8 @@ export class AdminSedesComponent implements OnInit {
 
   cargarTabla(){
     this._httpSedeService.getSedes().subscribe(resp => {
-      this.listaSedes=resp
+      this.listaSedes=resp;
+      this.isLoadingResults=false;
     })
   }
 
@@ -67,8 +71,41 @@ export class AdminSedesComponent implements OnInit {
     });
 
     dialogRef.componentInstance.respuesta.subscribe((result)=>{
+      const dialogRef = this.dialog.open(DialogGeneral, {
+        width: '400px',
+        data: {
+          mensaje:'Sede editada exitosamente'
+        }
+      });
       this.cargarTabla();
       dialogRef.close();
     });
+  }
+
+  cambiarEstado(estado:boolean, datos:Sede){
+    this.isLoadingResults=true;
+    let sede:Sede={
+      sedeId: datos.sedeId,
+      sedeNombre: datos.sedeNombre,
+      sedeTelefono: datos.sedeTelefono,
+      sedeDireccion: datos.sedeDireccion,
+      sedeHoraDesde: datos.sedeHoraDesde,
+      sedeHoraHasta: datos.sedeHoraHasta,
+      sedeEstado: estado
+    }
+    this._httpSedeService.putEditarSede(sede).subscribe(resp =>{
+      const dialogRef = this.dialog.open(DialogGeneral, {
+        width: '400px',
+        data: {
+          mensaje:'Cambio de estado exitosamente'
+        }
+      });
+      this.cargarTabla();
+    },error=>{
+      this.isLoadingResults=false;
+      const dialogRef = this.dialog.open(DialogError, {
+        width: '400px'
+      });
+    })
   }
 }

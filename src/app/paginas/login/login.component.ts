@@ -157,13 +157,7 @@ export class LoginComponent implements OnInit {
       id:0,
       rolId:2
     }
-      console.log(this.formReg)
-   /* if(itemRegistro.nombre != ''
-    && itemRegistro.email != ''
-    && itemRegistro.cedula != ''
-    && itemRegistro.password != ''
-    && itemRegistro.domicilio != ''
-    )*/if(this.formReg.valid){
+    if(this.formReg.valid){
       if(itemRegistro.password !== this.formReg.value.confirmPassword){
         alert("La contraseña y la confirmación no son iguales");
       }
@@ -191,18 +185,14 @@ export class LoginComponent implements OnInit {
 
     this.isLoadingResults =true;
 
-    // Return if the form is invalid
     if ( this.formLogin?.invalid )
     {
       this.isLoadingResults =false;
         return;
     }
 
-    // Disable the form
     this.formLogin?.disable();
 
-
-    // Sign in
     this._authService.signIn(this.formLogin?.value)
         .subscribe(
             (a) => {

@@ -118,6 +118,7 @@ export class HistoriaClinicaComponent {
   styleUrls: ['dialog-historia-clinica.css']
 })
 export class DialogHistoriaClinica {
+  isLoadingResults:boolean=false;
   myControl = new FormControl<string | Usuario>('');;
   usuarios: Usuario[]=[];
   listaRoles: Rol[] = [];
@@ -132,7 +133,7 @@ export class DialogHistoriaClinica {
 
   constructor(
     private dialog:MatDialog,
-    public dialogRef: MatDialogRef<DialogHistoriaClinica>,
+    public dialogModalHistoria: MatDialogRef<DialogHistoriaClinica>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private formBuilder: FormBuilder,
     private _httpHistoriaService:HistoriaClinicaService,
@@ -181,11 +182,19 @@ export class DialogHistoriaClinica {
           return name ? this._filter(name as string) : this.usuarios.slice();
         }),
       ); 
+      console.log(data)
       if(data.id!==0){
         _httpUsuarioService.getUsuarioId(data.datos.pacienteId).subscribe(resp => {
           this.completarDatosUsuario(resp);
-        })
+        });
         this.completarDatosHistoria(data.datos);
+      }else{
+        if(data.datos.pacienteId!==0){
+          _httpUsuarioService.getUsuarioId(data.datos.pacienteId).subscribe(resp => {
+            this.completarDatosUsuario(resp);
+            this.usuarioForm.patchValue({nombre:resp.usuarioNombre})
+          });
+        }
       }
   }
 
@@ -204,7 +213,7 @@ export class DialogHistoriaClinica {
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogModalHistoria.close();
   }
   completarDatosUsuario(datos:Usuario){
     this.myControl.setValue(datos.usuarioNombre);
@@ -225,6 +234,7 @@ export class DialogHistoriaClinica {
     })
   }
   guardarDatosUsuario(stepper: MatStepper){
+    this.isLoadingResults=true;
     let datos:Usuario={
       usuarioId:this.usuarioForm.value.id,
       usuarioNombre:this.usuarioForm.value.nombre,
@@ -242,7 +252,10 @@ export class DialogHistoriaClinica {
       fecha:'',
     }
     this._httpUsuarioService.putUsuario(datos,this.usuarioForm.value.id).subscribe(resp=>{
+      this.isLoadingResults=false;
       stepper.next();
+    },error=>{
+      this.isLoadingResults=false;
     })
   }
 
@@ -259,6 +272,7 @@ export class DialogHistoriaClinica {
     })
   }
   guardarHistoria(){
+    this.isLoadingResults=true;
     let datos: HistoriaClinicaConsulta={
       historiaId:this.data.id,
       pacienteId:this.usuarioForm.value.id,
@@ -275,21 +289,30 @@ export class DialogHistoriaClinica {
     console.log(datos)
     if(this.data.id===0){
       this._httpHistoriaService.postCrearHistoria(datos).subscribe(resp=>{
+        this.isLoadingResults=false;
         const dialogRef = this.dialog.open(DialogGeneral, {
           width: '400px',
           data: {
             mensaje:'Historia Clínica creada exitosamente'
           }
         });
+        dialogRef.afterClosed().subscribe(result=>{
+          this.dialogModalHistoria.close(resp.historiaId);
+        })
+      },error=>{
+        this.isLoadingResults=false;
       })
     }else{
       this._httpHistoriaService.putHistoria(datos,this.data.id).subscribe(resp => {
+        this.isLoadingResults=false;
         const dialogRef = this.dialog.open(DialogGeneral, {
           width: '400px',
           data: {
             mensaje:'Historia Clínica editada exitosamente'
           }
         });
+      },error=>{
+        this.isLoadingResults=false;
       });
     }
 
@@ -354,8 +377,6 @@ export class DialogDescargaHistoria {
       setTimeout(() => {
         this.descargar()
       }, 100);
-        
-      /*;*/
   }
 
   descargar(){
@@ -391,10 +412,8 @@ export class DialogDescargaHistoria {
       }).then((docResult) => {
         
         if(docResult!= undefined){
-          //this.isLoadingResults=false
           let nombre=this.data.usuarioNombre
           docResult.save(`Historia Clínica`+nombre+`.pdf`);
-          
           
         }
 

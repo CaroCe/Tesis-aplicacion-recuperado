@@ -37,11 +37,11 @@
         
       </ng-container>
       <div *ngFor="let subitem of item.subMenu">
-        <button mat-flat-button class="item-fondo" [routerLink]=subitem.url>
-          <mat-icon class="material-icons-outlined" style="margin-right: 10px;" >
-            {{subitem.icon}}
-          </mat-icon> {{subitem.nombre}}
-        </button>
+        <a mat-flat-button class="item-fondo" style="color: white;" [routerLink]=subitem.url>
+            <mat-icon class="material-icons-outlined" style="margin-right: 10px;" >
+              {{subitem.icon}}
+            </mat-icon> {{subitem.nombre}}
+        </a>
       </div>
     </div>
     

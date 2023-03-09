@@ -53,21 +53,11 @@ export class DialogConsultaEvaluacionComponent implements OnInit {
   }
 
   nuevaEvolucion(){
-    /*this.formEvolucion.patchValue({descripcion:'',fecha:new Date()});
-    this.fileInput.nativeElement.value = '';
-    this.fotosEvolucion=[];*/
     let nuevaEvolucion:Evolucion={
       consultaId: this.data.consultaId,
       evolucionId:0,
       evolucionFecha: new Date(),
       evolucionDescripcion: '',
-      fotosEvolucions:[]
-    }
-    let datos:Evolucion={
-      consultaId: this.data.consultaId,
-      evolucionFecha: new Date('09-12-2022'),
-      evolucionDescripcion: 'ejemplo de descripcion',
-      evolucionId:1,
       fotosEvolucions:[]
     }
     const dialogRef = this.dialog.open(DialogEditarEvolucionComponent, {
@@ -82,7 +72,6 @@ export class DialogConsultaEvaluacionComponent implements OnInit {
   }
 
   uploadFile() {
-    console.log(this.fileInput);
     let formData = new FormData();
     let files:File[]=this.fileInput.nativeElement.files;
     if (this.fileInput.nativeElement.files?.length) {
@@ -93,20 +82,12 @@ export class DialogConsultaEvaluacionComponent implements OnInit {
           if(reader.result){
             this.fotosEvolucion.push(reader.result?.toString());
           }
-          /*selectedFiles = selectedFiles?.filter(f => f?.name != files[i]?.name)
-          selectedFiles.push({ name: files[i]?.name, file: files[i], base64: reader?.result as string })
-          result.next(selectedFiles);
-          if (files?.length === (i + 1)) {
-            result.complete();
-          }*/
         };
       });
     } else {
       
     }
 
-    //this.fileInput.nativeElement.value = '';
-    console.log(this.fotosEvolucion)
   }
 
   guardarEvolucion(){
@@ -122,7 +103,6 @@ export class DialogConsultaEvaluacionComponent implements OnInit {
             fotoEvolucionImagen: this.fotosEvolucion[i]
           }
           this._httpEvolucionService.postFotosEvolucion(datosFotos).subscribe(result=>{
-            console.log(result)
           });
         }
         

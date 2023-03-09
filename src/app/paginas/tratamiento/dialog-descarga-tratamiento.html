@@ -49,32 +49,39 @@
                                 </tr>
                                 <tr>
                                     <td style="border: 2px solid grey;width: 130px;text-align: center;" *ngFor="let item of fase.tratamientosDia"> 
-                                        <div  style="border: 2px solid #83cd8d; margin: 5px 10px; background-color: #a7d4a0; padding: 5px; border-radius: 10px;">
-                                            Ejercicio en casa
-                                        </div>
-                                        <div >Observar video de guía</div>
+                                        <ng-container *ngFor="let ejercicio of item.ejercicioTratamientos">
+                                            <div  style="border: 2px solid #83cd8d; margin: 5px 10px; background-color: #a7d4a0; padding: 5px; border-radius: 10px;">
+                                                Ejercicio en casa
+                                                <p>{{ejercicio.ejercicio?.ejercicioNombre}} </p>
+                                            </div>
+                                            <div>Observar video de guía</div>
+                                        </ng-container>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <div  *ngFor="let item of fase.tratamientosDia">
-                        <div>{{formatoFecha(item.tratamientoDiaFecha)}} </div>
+                        
                         <div *ngFor="let ejercicio of item.ejercicioTratamientos; let i=index">
-                            <div style="padding-bottom: 10px;"> <strong style="text-decoration: underline;">Ejercicio
-                                    {{i+1}}. {{ejercicio.ejercicioNombre}}</strong></div>
-                            <div style="padding-bottom: 10px;"> <strong>Repeticiones: </strong>
+                            <div *ngIf="i==0"><strong> Fecha: {{formatoFecha(item.tratamientoDiaFecha)}}</strong></div>
+                            <div style="padding-bottom: 10px;padding-left: 20px;"> <strong style="text-decoration: underline;">
+                                Ejercicio {{i+1}}. </strong> {{ejercicio.ejercicio?.ejercicioNombre}} </div>
+
+                            <div style="padding-bottom: 10px;padding-left: 20px;"> <strong>Descripción: </strong>
+                                {{ejercicio.ejercicio?.ejercicioDescripcion}}</div>
+                            <div style="padding-bottom: 10px;padding-left: 20px;"> <strong>Repeticiones: </strong>
                                 {{ejercicio.ejercicioTratamientoRepeticiones}}</div>
-                            <div style="padding-bottom: 10px;"> <strong>Series: </strong>
+                            <div style="padding-bottom: 10px;padding-left: 20px;"> <strong>Series: </strong>
                                 {{ejercicio.ejercicioTratamientoSerie}}</div>
-                            <div style="padding-bottom: 10px;"> <strong>Descanso: </strong> {{ejercicio.ejercicioDescanso}}
+                            <div style="padding-bottom: 10px;padding-left: 20px;"> <strong>Descanso: </strong> {{ejercicio.ejercicioDescanso}}
                             </div>
-                            <div style="padding-bottom: 10px;"> <strong>Observación: </strong>
+                            <div style="padding-bottom: 10px;padding-left: 20px;"> <strong>Observación: </strong>
                                 {{ejercicio.ejercicioObservacion}}</div>
                         </div>
                     </div>
                     
-                    <div style="padding: 10px 0;width: 900px;">
+                    <div style="padding: 10px 20px;width: 900px;">
                         <strong>Recomendaciones</strong><br>
                         <p>{{fase.tratamientoRecomendacion}}</p>
                     </div>

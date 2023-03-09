@@ -45,7 +45,6 @@ export class DialogEditarEvolucionComponent implements OnInit {
   }
 
   uploadFile() {
-    console.log(this.fileInput);
     let formData = new FormData();
     let files:File[]=this.fileInput.nativeElement.files;
     if (this.fileInput.nativeElement.files?.length) {
@@ -56,20 +55,11 @@ export class DialogEditarEvolucionComponent implements OnInit {
           if(reader.result){
             this.fotosEvolucion.push(reader.result?.toString());
           }
-          /*selectedFiles = selectedFiles?.filter(f => f?.name != files[i]?.name)
-          selectedFiles.push({ name: files[i]?.name, file: files[i], base64: reader?.result as string })
-          result.next(selectedFiles);
-          if (files?.length === (i + 1)) {
-            result.complete();
-          }*/
         };
       });
     } else {
       
     }
-
-    //this.fileInput.nativeElement.value = '';
-    console.log(this.fotosEvolucion)
   }
   guardarEvolucion(){
     let datos:Evolucion={

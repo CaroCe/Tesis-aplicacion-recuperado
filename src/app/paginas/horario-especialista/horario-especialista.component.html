@@ -4,6 +4,15 @@
         <mat-card-subtitle>Agregar horarios disponibles para consulta</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
+        <mat-form-field appearance="outline" *ngIf="administrador">
+            <mat-label>Especialista</mat-label>
+            <mat-select [formControl]="especialistaId">
+              <mat-option value="0" disabled="true" selected>Seleccione un especialista</mat-option>
+              <ng-container  *ngFor="let especialista of listaEspecialistas">
+                <mat-option *ngIf="especialista.usuarioEstado" [value]="especialista.usuarioId" (click)="cambioEspecialista()">{{especialista.usuarioNombre}} </mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
         <mat-grid-list cols="7" rowHeight="400">
             <mat-grid-tile *ngFor="let dia of horarioDias">
                 <div style="height: 100%;width: 100%;">
@@ -11,15 +20,15 @@
                         <mat-list-item>
                             <h2>{{dia.horarioDiaNombre}}</h2>
                         </mat-list-item>
-                        <mat-list-item *ngFor="let item of dia.horarioTrabajo" style="height: 70px;margin-bottom: 5px;">
-                            <button mat-raised-button color="accent" style="width: 100%;height: 100%;" (click)="editarHorario(item,dia.horarioDiaId)">
+                        <mat-list-item *ngFor="let item of dia.horarioTrabajo; let i=index" style="height: 70px;margin-bottom: 5px;">
+                            <button mat-raised-button color="accent" style="width: 100%;height: 100%;" (click)="editarHorario(item,dia,i)">
                                 {{item.horaDesde}}
                                 <br>
                                 {{item.horaHasta}}
                             </button><!--{{item.horarioTrabajo.horarioTrabajoHasta.split('-')[1]}}-->
                         </mat-list-item>
                         <mat-list-item>
-                            <button mat-raised-button color="primary" (click)="nuevoHorario(dia.horarioDiaId)">Agregar</button>
+                            <button mat-raised-button color="primary" (click)="nuevoHorario(dia)">Agregar</button>
                         </mat-list-item>
                     </mat-list>
                 </div>

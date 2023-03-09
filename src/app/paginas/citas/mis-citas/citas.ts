@@ -11,6 +11,7 @@ export interface CitaAdmin {
     estado:      string;
     especialista:      string;
     paciente:      string;
+    pacienteId:     number;
     observacion: string;
     id:          number;
     estadoId:    number;

@@ -22,7 +22,6 @@ export class AdminForoComponent implements OnInit {
   formFiltro:FormGroup;
   fechaDesde = new Date('January 1 2022');
   displayedColumns: string[] = ['problema', 'diagnostico', 'fases', 'foro'];
- // dataSource: Consulta[] = [];
   dataSource = new MatTableDataSource<Foro>;
   datosFases: FaseTratamiento[]=[];
   constructor(private formBuilder:FormBuilder,
@@ -62,17 +61,7 @@ export class AdminForoComponent implements OnInit {
 
     this._httpForoService.postConsultarForos(filtro).subscribe(resp=>{
       this.dataSource.data=resp;
-    })
-    /*this._httpConsultaService.postConsultaPorFiltros(filtro).subscribe(resp=>{
-      this.dataSource=resp;
-      resp.forEach((element,i) => {
-        this._httpTratamientoService.getTratamientosPorConsulta(Number(element.consultaId)).subscribe(respTratamientos=>{
-          this.dataSource[i].tratamientos=respTratamientos;
-        })
-        
-      });
-    })*/
-
+    });
   }
 
   consultarFases(id:number):FaseTratamiento[]{

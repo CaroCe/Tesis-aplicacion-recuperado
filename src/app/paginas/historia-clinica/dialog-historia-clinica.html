@@ -1,3 +1,7 @@
+<div class="loading-page"
+       *ngIf="isLoadingResults">
+    <mat-spinner></mat-spinner>
+</div>
 <mat-card>
     <mat-card-header>
         <mat-card-title>Historia clínica</mat-card-title>
@@ -10,18 +14,28 @@
                     <mat-grid-list cols="3" rowHeight="80px">
                         <mat-grid-tile colspan="3">
                             <div *ngIf="data.id==0">
-                                <mat-form-field appearance="outline">
-                                    <mat-label>Nombre completo</mat-label>
-                                    <input matInput type="nombre" [formControl]="myControl" [matAutocomplete]="auto">
+                                <ng-container *ngIf=" data.datos.pacienteId!==0; else elseTemplate">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Nombre completo</mat-label>
+                                        <input matInput type="nombre" formControlName="nombre" >
+                                    </mat-form-field>
+                                </ng-container>
+                                <ng-template #elseTemplate>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Nombre completo</mat-label>
+                                        <input matInput type="nombre" [formControl]="myControl" [matAutocomplete]="auto">
 
-                                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option" (click)="completarDatosUsuario(option)">
-                                        {{option.usuarioNombre}}
-                                        </mat-option>
-                                    </mat-autocomplete>
-                                </mat-form-field>
+                                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                                            <mat-option *ngFor="let option of filteredOptions | async" [value]="option" (click)="completarDatosUsuario(option)">
+                                            {{option.usuarioNombre}}
+                                            </mat-option>
+                                        </mat-autocomplete>
+                                    </mat-form-field>
+                                </ng-template>
+                                
+
                             </div>
-                            <div *ngIf="data.id!==0">
+                            <div *ngIf="data.id!==0 ">
                                 <mat-form-field appearance="outline">
                                     <mat-label>Nombre completo</mat-label>
                                     <input matInput type="nombre" formControlName="nombre" >
@@ -60,7 +74,6 @@
                                     <ng-container *ngFor="let sede of listaSedes">
                                         <mat-option *ngIf="sede.sedeEstado" [value]="sede.sedeId">{{sede.sedeNombre}} </mat-option>
                                       </ng-container>
-                                <!--  <mat-error *ngIf="usuarioForm.hasError('required')" ></mat-error>-->
                                 </mat-select>
                                 <mat-icon matSuffix>business</mat-icon>
                             </mat-form-field>
@@ -78,7 +91,6 @@
                                 <mat-select [formControl]="lateralidadUsuario" >
                                     <mat-option value="0" disabled="true" selected>Seleccione una lateralidad</mat-option>
                                     <mat-option *ngFor="let item of listaLateralidad" [value]="item.lateralidadId">{{item.lateralidadNombre}} </mat-option>
-                                <!--  <mat-error *ngIf="usuarioForm.hasError('required')" ></mat-error>-->
                                 </mat-select>
                                 <mat-icon matSuffix>pan_tool</mat-icon>
                             </mat-form-field>
@@ -158,7 +170,7 @@
                                 </mat-form-field>
                             </mat-grid-tile>
                         </mat-grid-list>
-                        <button mat-raised-button color="primary" (click)="guardarHistoria()">Guardar</button>
+                        <button mat-raised-button color="primary" (click)="guardarHistoria()">Guardar Historia Clínica</button>
                     </form>
                 </div>
             </mat-step>

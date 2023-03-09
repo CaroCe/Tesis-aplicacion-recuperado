@@ -6,6 +6,8 @@ import { HorarioService } from '../../servicios/horario.service';
 import { DialogGeneral } from '../dialog-general/dialog-general';
 import { UsuariosService } from '../../servicios/usuarios.service';
 import { SedesService } from '../../servicios/sedes.service';
+import { EspecialistaService } from '../../servicios/especialista.service';
+import { Usuario } from '../users/user';
 
 @Component({
   selector: 'app-horario-especialista',
@@ -14,32 +16,15 @@ import { SedesService } from '../../servicios/sedes.service';
 })
 export class HorarioEspecialistaComponent implements OnInit, OnInit {
   sedeId:number = 0;
+  administrador:boolean=false;
+  especialistaId = new FormControl(0);
   horaDesde: string = '';
   horaHasta: string = '';
   horarioDias: HorarioPorEspecialista[]=[];
-  horarioLunes:HorarioDia[]=[
-   /* {
-      id:1,
-      diaId:1,
-      valor:'8:00am-3:00pm'
-    }*/
-  ];
+  listaEspecialistas: Usuario[] = [];
+  listaEspecialistaFiltrada: Usuario[] = [];
+  horarioLunes:HorarioDia[]=[];
   horarioMartes:HorarioDia[]=[
-   /* {
-      id:1,
-      diaId:1,
-      valor:'7:30am-11:00am'
-    },
-    {
-      id:1,
-      diaId:1,
-      valor:'12:00pm-2:30pm'
-    },
-    {
-      id:1,
-      diaId:1,
-      valor:'2:30am-5:00pm'
-    },*/
   ];
 
   constructor(
@@ -48,40 +33,71 @@ export class HorarioEspecialistaComponent implements OnInit, OnInit {
     private _httpUsuarioService: UsuariosService,
     private _httpSedeService: SedesService) {
     this.cargarHorarios();
+    _httpUsuarioService.getUsuarios().subscribe(esp=>{
+      this.listaEspecialistas = esp.filter(element=>element.rolId==1);
+    });
    }
 
    ngOnInit(): void {
+    
     let usuarioId=Number(localStorage.getItem('userId'));
     this._httpUsuarioService.getUsuarioId(usuarioId).subscribe(resp=>{
+      if(resp.rolId==1){
+        this.especialistaId.patchValue(usuarioId);
+        this.administrador=false;
+        this.cargarHorarios();
+      }else if(resp.rolId==3){
+        this.administrador=true;
+      }
+
       this._httpSedeService.getSedeId(resp.sedeId).subscribe(resp=>{
         this.horaDesde=resp.sedeHoraDesde?resp.sedeHoraDesde.toString():'';
         this.horaHasta=resp.sedeHoraHasta?resp.sedeHoraHasta.toString():'';
       })
     });
    }
+
+   cambioEspecialista(){
+    this.cargarHorarios();
+   }
+
   cargarHorarios(){
-    this._htppHorarioService.getHorarioEspecialistaUsuarios(Number(localStorage.getItem('userId'))).subscribe(resp=>{
+    this._htppHorarioService.getHorarioEspecialistaUsuarios(Number(this.especialistaId.value)).subscribe(resp=>{
       this.horarioDias=resp
     })
   }
-  nuevoHorario(id:number){
+  nuevoHorario(dia:HorarioPorEspecialista){
     let item:HorarioTrabajoPorEspecialista ={
       horaDesde:this.horaDesde,
       horaHasta:this.horaHasta,
       id:0
     }
+    if(dia.horarioTrabajo.length>0){
+      item.horaDesde=dia.horarioTrabajo[dia.horarioTrabajo.length-1].horaHasta;
+    }
+    
     const dialogRef = this.dialog.open(DialogHorario, {
       width: '400px',
-      data: {trabajoId:0,datos:item,id:id, horaDesde: this.horaDesde, horaHasta: this.horaHasta}
+      data: {especialistaId:this.especialistaId.value,trabajoId:0,datos:item,id:dia.horarioDiaId, horaDesde: item.horaDesde, horaHasta: this.horaHasta}
     });
     dialogRef.afterClosed().subscribe(result => {
       this.cargarHorarios();
     }); 
   }
-  editarHorario(horario:HorarioTrabajoPorEspecialista,id:number){
+
+  editarHorario(horario:HorarioTrabajoPorEspecialista,dia:HorarioPorEspecialista, indice:number){
+    let item:HorarioTrabajoPorEspecialista ={
+      horaDesde:horario.horaDesde,
+      horaHasta:horario.horaHasta,
+      id:horario.id
+    }
+    if(dia.horarioTrabajo.length>1 && indice!==0){
+      item.horaDesde=dia.horarioTrabajo[indice-1].horaHasta
+    }
+    
     const dialogRef = this.dialog.open(DialogHorario, {
       width: '400px',
-      data: {trabajoId:horario.id,datos:horario,id:id, horaDesde: this.horaDesde, horaHasta: this.horaHasta}
+      data: {especialistaId:this.especialistaId.value,trabajoId:horario.id,datos:item,id:dia.horarioDiaId, horaDesde: item.horaDesde, horaHasta: this.horaHasta}
     });
     dialogRef.afterClosed().subscribe(result => {
      this.cargarHorarios();
@@ -124,7 +140,6 @@ export class DialogHorario implements OnInit{
         horarioDesde:  new FormControl(data.datos.horaDesde, [Validators.min(data.horaDesde), Validators.max(data.horaHasta)]),
         horarioHasta:  new FormControl(data.datos.horaHasta, [Validators.min(data.horaDesde), Validators.max(data.horaHasta)]),
       })
-      console.log(data)
   }
 
   ngOnInit(): void {
@@ -133,15 +148,12 @@ export class DialogHorario implements OnInit{
   }
 
   verificarHorarioDesde(event:any){
-    console.log(event, this.data.horaDesde);
     let horamin=event.target.value;
     
     if(horamin<this.data.horaDesde){
-      console.log('hora min < hora desde');
       event.target.value=this.data.horaDesde
     }else{
       if(horamin>this.data.horaHasta){
-        console.log('hora min > hora hasta'); 
       event.target.value=this.data.horaHasta       
       }
     }
@@ -152,11 +164,9 @@ export class DialogHorario implements OnInit{
     let horamin=this.horarioForm.value.horarioDesde?this.horarioForm.value.horarioDesde:'';
     let horamax=event.target.value;
     if(horamax<horamin){
-      console.log('hora max < hora desde');
       event.target.value=horamin
     }else{
       if(horamax>this.data.horaHasta){
-        console.log('hora min > hora hasta'); 
       event.target.value=this.data.horaHasta       
       }
     }
@@ -172,7 +182,7 @@ export class DialogHorario implements OnInit{
       this._htppHorarioService.postHorarioTrabajo(datos).subscribe(resp=> {
         datos = resp;
         let hEsp:HorarioEspecialista ={
-          especialistaId:Number(localStorage.getItem('userId')),
+          especialistaId:Number(this.data.especialistaId),
           horarioId:this.data.id,
           horarioTrabajoId:datos.horarioTrabajoId,
           horarioEspecialistaId:0,

@@ -20,6 +20,7 @@ import { MatTableDataSource } from '@angular/material/table';
 })
 export class ForoComponent implements OnInit {
 
+  isLoadingResults:boolean=false;
   formFiltro:FormGroup;
   fechaDesde = new Date('January 1 2022');
   displayedColumns: string[] = ['problema', 'diagnostico', 'accion'];
@@ -57,18 +58,14 @@ export class ForoComponent implements OnInit {
     }
     this._httpForoService.postConsultarForos(filtro).subscribe(resp=>{
       this.listaForo=resp.filter(element=>element.foroEstado===true);
-      resp.forEach((element,i) => {
-        this._httpTratamientoService.getTratamientosPorConsulta(Number(element.consultaId)).subscribe(respTratamientos=>{
-          this.listaForo[i].tratamientos=respTratamientos;
-        })
-        
-      });
+      
       this.dataSource.data=this.listaForo;
     })
 
   }
 
   abirForo(element:Foro){
+    
     const dialogRef = this.dialog.open(DialogForo,{
       width: '1500px',
       height:'1000px',

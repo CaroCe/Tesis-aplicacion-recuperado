@@ -1,3 +1,7 @@
+<div class="loading-page"
+       *ngIf="isLoadingResults">
+    <mat-spinner></mat-spinner>
+</div>
 <mat-card>
     <mat-card-header>
         <mat-card-title>Fase {{form.value.fase}}</mat-card-title>
@@ -9,6 +13,7 @@
                     <mat-form-field appearance="outline">
                         <mat-label>Fase</mat-label>
                         <input matInput type="text" formControlName = "fase" required>
+                        <mat-error *ngIf="form.controls.fase.hasError('required')" >Campo Obligatorio *</mat-error>
                     </mat-form-field>
                 </mat-grid-tile>
                 <mat-grid-tile>

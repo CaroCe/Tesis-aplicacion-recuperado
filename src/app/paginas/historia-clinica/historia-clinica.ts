@@ -32,8 +32,8 @@ export interface Lateralidad{
 }
 
 export interface FiltroHistoria{
-    fechaDesde: Date;
-    fechaHasta: Date;
+    fechaDesde: Date | string;
+    fechaHasta: Date | string;
     pacienteId: number;
     cedula: string
   }

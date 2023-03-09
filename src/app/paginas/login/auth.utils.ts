@@ -33,7 +33,6 @@ export class AuthUtils
         }catch(e){
             return "";
         }
-        //console.log(JSON.parse(token).hasOwnProperty('expires_in'))
         
         return JSON.parse(token);
     }

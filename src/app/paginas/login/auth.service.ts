@@ -47,10 +47,6 @@ export class AuthService {
     );
   }
 
-
-  /**
-   * Sign out
-   */
   signOut(): Observable<any> {
     localStorage.removeItem('userId');
 

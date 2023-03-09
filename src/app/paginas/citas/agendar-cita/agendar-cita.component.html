@@ -64,7 +64,7 @@
                                     *ngFor="let item of dia.horarioCitas" 
                                     color="accent" 
                                     [style]="obtenerEstilo(item.disponibles)"
-                                    (click)="agendarCita(dia,item)" [disabled]="item.disponibles == 0"
+                                    (click)="agendarCita(dia,item)" [disabled]="item.disponibles <= 0"
                                     >
                                     <p style="margin: 0;">{{item.horaCita}} - {{tiempoFinal(item.horaCita)}}</p>
                                     <p *ngIf="item.disponibles>=0">Diponibles: {{item.disponibles}}</p>

@@ -30,80 +30,93 @@
             </mat-grid-tile>
 
         </mat-grid-list>
-        <div *ngFor="let fase of fasesTratamiento">
-            <h3> <strong> Fase {{fase.tratamientoFase}}:</strong> {{fase.tratamientoDescripcion}} </h3>
-            <table mat-table [dataSource]="fase.tratamientosDia" class="mat-elevation-z8" style="width: 100%;">
+        <mat-accordion>
+            <mat-expansion-panel hideToggle>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Tratamientos
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div *ngFor="let fase of fasesTratamiento">
+                    <h3> <strong> Fase {{fase.tratamientoFase}}:</strong> {{fase.tratamientoDescripcion}} </h3>
+                    <table mat-table [dataSource]="fase.tratamientosDia" class="mat-elevation-z8" style="width: 100%;">
 
-                <ng-container matColumnDef="dia">
-                    <th mat-header-cell *matHeaderCellDef> Día </th>
-                    <td mat-cell *matCellDef="let element; let i=index"> {{i+1}} </td>
-                </ng-container>
+                        <ng-container matColumnDef="dia">
+                            <th mat-header-cell *matHeaderCellDef> Día </th>
+                            <td mat-cell *matCellDef="let element; let i=index"> {{i+1}} </td>
+                        </ng-container>
 
-                <ng-container matColumnDef="ejercicio">
-                    <th mat-header-cell *matHeaderCellDef> Ejercicio </th>
-                    <td mat-cell *matCellDef="let element">
-                        <div style="height: 20px;" [style]="agregarBorde(j,element.ejercicioTratamientos.length)"
-                            *ngFor="let ejercicio of element.ejercicioTratamientos; let j=index">
-                            {{ejercicio.ejercicio.ejercicioNombre}} </div>
-                    </td>
-                </ng-container>
+                        <ng-container matColumnDef="ejercicio">
+                            <th mat-header-cell *matHeaderCellDef> Ejercicio </th>
+                            <td mat-cell *matCellDef="let element">
+                                <div style="height: 20px;" [style]="agregarBorde(j,element.ejercicioTratamientos.length)"
+                                    *ngFor="let ejercicio of element.ejercicioTratamientos; let j=index">
+                                    {{ejercicio.ejercicio.ejercicioNombre}} </div>
+                            </td>
+                        </ng-container>
 
-                <ng-container matColumnDef="repeticion">
-                    <th mat-header-cell *matHeaderCellDef> Repetición </th>
-                    <td mat-cell *matCellDef="let element">
-                        <div style="height: 20px; text-align: center;"
-                            [style]="agregarBorde(j,element.ejercicioTratamientos.length)"
-                            *ngFor="let ejercicio of element.ejercicioTratamientos; let j=index">
-                            {{ejercicio.ejercicioTratamientoRepeticiones}}
-                        </div>
-                    </td>
-                </ng-container>
-                <ng-container matColumnDef="series">
-                    <th mat-header-cell *matHeaderCellDef> Series </th>
-                    <td mat-cell *matCellDef="let element">
-                        <div style="height: 20px; text-align: center;"
-                            [style]="agregarBorde(j,element.ejercicioTratamientos.length)"
-                            *ngFor="let ejercicio of element.ejercicioTratamientos; let j=index">
-                            {{ejercicio.ejercicioTratamientoSerie}}
-                        </div>
-                    </td>
-                </ng-container>
+                        <ng-container matColumnDef="repeticion">
+                            <th mat-header-cell *matHeaderCellDef> Repetición </th>
+                            <td mat-cell *matCellDef="let element">
+                                <div style="height: 20px; text-align: center;"
+                                    [style]="agregarBorde(j,element.ejercicioTratamientos.length)"
+                                    *ngFor="let ejercicio of element.ejercicioTratamientos; let j=index">
+                                    {{ejercicio.ejercicioTratamientoRepeticiones}}
+                                </div>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="series">
+                            <th mat-header-cell *matHeaderCellDef> Series </th>
+                            <td mat-cell *matCellDef="let element">
+                                <div style="height: 20px; text-align: center;"
+                                    [style]="agregarBorde(j,element.ejercicioTratamientos.length)"
+                                    *ngFor="let ejercicio of element.ejercicioTratamientos; let j=index">
+                                    {{ejercicio.ejercicioTratamientoSerie}}
+                                </div>
+                            </td>
+                        </ng-container>
 
-                <ng-container matColumnDef="descanso">
-                    <th mat-header-cell *matHeaderCellDef> Descanso </th>
-                    <td mat-cell *matCellDef="let element">
-                        <div style="height: 20px; text-align: center;"
-                            [style]="agregarBorde(j,element.ejercicioTratamientos.length)"
-                            *ngFor="let ejercicio of element.ejercicioTratamientos; let j=index">
-                            {{ejercicio.ejercicioDescanso}}
-                        </div>
-                    </td>
-                </ng-container>
+                        <ng-container matColumnDef="descanso">
+                            <th mat-header-cell *matHeaderCellDef> Descanso </th>
+                            <td mat-cell *matCellDef="let element">
+                                <div style="height: 20px; text-align: center;"
+                                    [style]="agregarBorde(j,element.ejercicioTratamientos.length)"
+                                    *ngFor="let ejercicio of element.ejercicioTratamientos; let j=index">
+                                    {{ejercicio.ejercicioDescanso}}
+                                </div>
+                            </td>
+                        </ng-container>
 
-                <ng-container matColumnDef="observacion">
-                    <th mat-header-cell *matHeaderCellDef> Observación </th>
-                    <td mat-cell *matCellDef="let element">
-                        <div style="height: 20px;" [style]="agregarBorde(j,element.ejercicioTratamientos.length)"
-                            *ngFor="let ejercicio of element.ejercicioTratamientos; let j=index">
-                            {{ejercicio.ejercicioObservacion}}
-                        </div>
-                    </td>
-                </ng-container>
+                        <ng-container matColumnDef="observacion">
+                            <th mat-header-cell *matHeaderCellDef> Observación </th>
+                            <td mat-cell *matCellDef="let element">
+                                <div style="height: 20px;" [style]="agregarBorde(j,element.ejercicioTratamientos.length)"
+                                    *ngFor="let ejercicio of element.ejercicioTratamientos; let j=index">
+                                    {{ejercicio.ejercicioObservacion}}
+                                </div>
+                            </td>
+                        </ng-container>
 
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            </table>
-        </div>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+                
 
     </mat-card-content>
     <mat-divider inset></mat-divider>
     <mat-card-actions>
         <div>
             <form [formGroup]="form">
-                    <mat-form-field appearance="outline">
-                        <mat-label><strong> Comentario:</strong></mat-label>
-                        <textarea matInput type="text" formControlName="comentario" rows="4"></textarea>
-                    </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label><strong> Comentario:</strong></mat-label>
+                    <textarea matInput type="text" formControlName="comentario" rows="4"></textarea>
+                </mat-form-field>
                 <div style="text-align: right;">
                     <button mat-raised-button color="primary" (click)="guardarComentario()">Comentar</button>
                 </div>
@@ -114,10 +127,11 @@
                 <mat-card-title-group>
                     <mat-card-title>{{usuario}}</mat-card-title>
                     <mat-card-subtitle>{{fecha}}</mat-card-subtitle>
-                    <img mat-card-sm-image src="assets/sin-perfil.jpg" style="border-radius: 50px;width: 15%; height: 15%;">
+                    <img mat-card-sm-image src="assets/sin-perfil.jpg"
+                        style="border-radius: 50px;width: 15%; height: 15%;">
                 </mat-card-title-group>
-                <mat-card-content >
-                    <div >{{usuario}} </div>
+                <mat-card-content>
+                    <div>{{usuario}} </div>
                 </mat-card-content>
             </mat-card>
         </div>
@@ -125,14 +139,14 @@
 
     </mat-card-actions>
     <mat-card-footer>
-        
+
         <mat-card class="card-comentario" *ngFor="let item of listaComentarios">
             <mat-card-title-group>
                 <mat-card-title>{{item.usuario}}</mat-card-title>
                 <img mat-card-sm-image src="assets/sin-perfil.jpg" style="border-radius: 50px;width: 15%; height: 15%;">
             </mat-card-title-group>
             <mat-card-content>
-                <div >{{item.comentarioForoMensaje}}</div>
+                <div>{{item.comentarioForoMensaje}}</div>
             </mat-card-content>
         </mat-card>
     </mat-card-footer>

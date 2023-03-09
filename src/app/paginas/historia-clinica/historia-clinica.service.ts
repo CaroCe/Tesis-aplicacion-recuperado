@@ -30,8 +30,8 @@ export class HistoriaClinicaService {
   getHistoriaId(id: number):Observable<HistoriaClinicaConsulta>{
     return this.http.get<HistoriaClinicaConsulta>(this.urlService+"/"+id,headerOauth);
   }
-  postCrearHistoria(datos: HistoriaClinicaConsulta):Observable<any>{
-    return this.http.post<any>(this.urlService,datos,headerOauth)
+  postCrearHistoria(datos: HistoriaClinicaConsulta):Observable<HistoriaClinicaConsulta>{
+    return this.http.post<HistoriaClinicaConsulta>(this.urlService,datos,headerOauth)
   }
   putHistoria(datos: HistoriaClinicaConsulta,id: number):Observable<any>{
     return this.http.put(this.urlService+'/'+id,datos,headerOauth); 

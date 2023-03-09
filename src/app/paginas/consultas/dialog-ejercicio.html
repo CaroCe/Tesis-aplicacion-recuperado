@@ -1,3 +1,7 @@
+<div class="loading-page"
+       *ngIf="isLoadingResults">
+    <mat-spinner></mat-spinner>
+</div>
 <mat-card>
     <mat-card-header>
         <mat-card-title>Datos ejercicio</mat-card-title>
@@ -10,28 +14,33 @@
                         <mat-label>Ejercicio</mat-label>
                         <mat-select formControlName="ejercicioId">
                             <ng-container *ngFor="let item of listaEjercicios">
-                                <mat-option [value]="item.ejercicioId"  (click)="ejercicioSeleccionado(item)">{{item.ejercicioNombre}}</mat-option>
+                                <mat-option [value]="item.ejercicioId"  (click)="ejercicioSeleccionado(item)" required>{{item.ejercicioNombre}}</mat-option>
                               </ng-container>
-                            
+                        <mat-error *ngIf="form.controls.ejercicioId.hasError('required')" >Campo Obligatorio *</mat-error>
                         </mat-select>
                     </mat-form-field>
                 </mat-grid-tile>
                 <mat-grid-tile>
                     <mat-form-field appearance="outline">
                         <mat-label>Repeticiones</mat-label>
-                        <input matInput type="number" min="0" formControlName="repeticiones" required>
+                        <input matInput type="number" placeholder="0" min="1" formControlName="repeticiones" onkeypress="return event.charCode >= 48 && event.charCode <=57" required>
+                        <mat-error *ngIf="form.controls.repeticiones.hasError('required')" >Campo Obligatorio *</mat-error>
+                        <mat-error *ngIf="form.controls.repeticiones.hasError('min')" >Debe ingresar un valor diferente de 0 *</mat-error>
                     </mat-form-field>
                 </mat-grid-tile>
                 <mat-grid-tile>
                     <mat-form-field appearance="outline">
                         <mat-label>Series</mat-label>
-                        <input matInput type="number" min="0" formControlName="series" required>
+                        <input matInput type="number" placeholder="0" min="1" formControlName="series" onkeypress="return event.charCode >= 48 && event.charCode <=57" required>
+                        <mat-error *ngIf="form.controls.series.hasError('required')" >Campo Obligatorio *</mat-error>
+                        <mat-error *ngIf="form.controls.series.hasError('min')" >Debe ingresar un valor diferente de 0 *</mat-error>
                     </mat-form-field>
                 </mat-grid-tile>
                 <mat-grid-tile>
                     <mat-form-field appearance="outline">
                         <mat-label>Descanso</mat-label>
-                        <input matInput type="text" formControlName="descanso" required="">
+                        <input matInput type="text" formControlName="descanso" required>
+                        <mat-error *ngIf="form.controls.descanso.hasError('required')" >Campo Obligatorio *</mat-error>
                     </mat-form-field>
                 </mat-grid-tile>
                 <mat-grid-tile>
@@ -40,11 +49,14 @@
                         <input matInput type="text" formControlName="observacion">
                     </mat-form-field>
                 </mat-grid-tile>
+                <mat-grid-tile>
+                    <button mat-raised-button color="primary" style="width: 90%;" (click)="guardar()">Guardar</button>
+                </mat-grid-tile>
             </form>
             
         </mat-grid-list>
     </mat-card-content>
     <mat-card-actions style="text-align: center;">
-        <button mat-raised-button color="primary" style="width: 90%;" (click)="guardar()">Guardar</button>
+        
     </mat-card-actions>
 </mat-card>

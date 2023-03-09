@@ -29,7 +29,6 @@ export class EjerciciosService {
     return this.http.post<any>(this.urlService,datos,headerOauth)
   }
   putEjercicio(datos: Ejercicio,id: number):Observable<any>{
-    console.log(JSON.stringify(datos));
     return this.http.put(this.urlService+'/'+id,datos,headerOauth); 
   };
 

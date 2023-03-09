@@ -18,6 +18,7 @@ import { DialogGeneral } from '../dialog-general/dialog-general';
   styleUrls: ['./seguimiento.component.css']
 })
 export class SeguimientoComponent implements OnInit {
+  isLoadingResults=false;
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
@@ -26,7 +27,7 @@ export class SeguimientoComponent implements OnInit {
   formFiltro:FormGroup;
 
   listaUsuarios:Usuario[]=[];
-  displayedColumns: string[] = ['fecha', 'problema', 'diagnostico', 'acciones'];
+  displayedColumns: string[] = ['fecha', 'paciente', 'problema', 'diagnostico', 'acciones'];
   dataSource  = new MatTableDataSource<Consulta>();
   constructor(private dialog:MatDialog, private _httpUsuariosService: UsuariosService,private formBuilder:FormBuilder,
     private _httpConsutaService: ConsultasService,) { 
@@ -54,6 +55,7 @@ export class SeguimientoComponent implements OnInit {
     this.formFiltro.patchValue({fechaHasta:event.value?.getFullYear()+'-'+(Number(event.value?.getMonth())+1)+'-'+event.value?.getDate()});
   }
   cargarTabla(){
+    this.isLoadingResults=true;
     let filtro: FiltroConsulta={
       fechaDesde: this.formFiltro.value.fechaDesde,
       fechaHasta: this.formFiltro.value.fechaHasta,
@@ -63,6 +65,9 @@ export class SeguimientoComponent implements OnInit {
     this._httpConsutaService.postConsultaPorFiltros(filtro).subscribe(resp =>{
       this.dataSource= new MatTableDataSource<Consulta>();
       this.dataSource.data=resp;
+      this.isLoadingResults=false;
+    },error=>{
+      this.isLoadingResults=false;
     })
   }
 

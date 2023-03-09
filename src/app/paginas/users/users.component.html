@@ -1,3 +1,7 @@
+<div class="loading-page"
+       *ngIf="isLoadingResults">
+    <mat-spinner></mat-spinner>
+</div>
 <mat-card class="mat-elevation-z8" style="margin: 10px;">
   <mat-card-header>
     <mat-card-title>Usuarios</mat-card-title>
@@ -11,9 +15,9 @@
           <form action="" [formGroup]="filtroForm">
             <mat-grid-list cols="2" rowHeight="75">
               <mat-grid-tile colspan="2">
-                <mat-radio-group aria-label="Select an option" style="width: 100%;" formControlName="rolId">
-                  <mat-radio-button *ngFor="let rol of listaRoles" [value]="rol.rolId">{{rol.rolNombre}}
-                  </mat-radio-button>
+                <mat-radio-group aria-label="Select an option" style="width: 100%;" formControlName="rolId" #radio>
+                  <mat-radio-button [value]="0"> Todos </mat-radio-button>
+                  <mat-radio-button *ngFor="let rol of listaRoles" [value]="rol.rolId">{{rol.rolNombre}}</mat-radio-button>
                 </mat-radio-group>
               </mat-grid-tile>
               <mat-grid-tile colspan="2">
@@ -71,8 +75,17 @@
               <ng-container matColumnDef="estado">
                 <th mat-header-cell *matHeaderCellDef> Estado </th>
                 <td mat-cell *matCellDef="let element">
-                  <mat-icon *ngIf="element.usuarioEstado">check_circle</mat-icon>
-                  <mat-icon *ngIf="!element.usuarioEstado">cancel</mat-icon>
+                  <ng-container *ngIf="element.usuarioEstado; else elseTemplate">
+                    <button mat-icon-button color="primary"  aria-label="Example icon button with a home icon" (click)="cambiarEstado(false,element)" matTooltip="Presione para desactivar">
+                      <mat-icon>check_circle</mat-icon>
+                    </button>
+                  </ng-container>
+                  <ng-template #elseTemplate>
+                    <button mat-icon-button color="primary"  aria-label="Example icon button with a home icon" (click)="cambiarEstado(true,element)" matTooltip="Presione para activar">
+                      <mat-icon>circle</mat-icon>
+                    </button>
+                  </ng-template>
+                  
                 </td>
               </ng-container>
 
@@ -83,111 +96,123 @@
         </div>
       </mat-grid-tile>
       <mat-grid-tile>
-        <div style="width: 100%;height: 680px;background-color:rgba(229, 233, 198, 0.24); border-radius: 20px;">
-          <mat-grid-list cols="2" rowHeight="75">
-            <form action="" [formGroup]="usuarioForm">
-              <mat-grid-tile colspan="2">
-                <h2>Información</h2>
-              </mat-grid-tile>
-              <mat-grid-tile colspan="2">
-                <mat-form-field appearance="outline">
-                  <mat-label>Nombre</mat-label>
-                  <input matInput formControlName="nombre">
-                  <mat-error *ngIf="usuarioForm.controls.nombre.hasError('required')">Campo obligatorio*</mat-error>
-                </mat-form-field>
-              </mat-grid-tile>
-              <mat-grid-tile>
-                <mat-form-field appearance="outline">
-                  <mat-label>Cédula</mat-label>
-                  <input matInput type="text" formControlName="cedula" maxlength="10" onkeypress="return event.charCode >= 48 && event.charCode <=57" required>
-                </mat-form-field>
-              </mat-grid-tile>
-              <mat-grid-tile>
-                <mat-form-field appearance="outline">
-                  <mat-label>Fecha nacimiento</mat-label>
-                  <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento">
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-              </mat-grid-tile>
-              <mat-grid-tile>
-                <mat-form-field appearance="outline">
-                  <mat-label>Teléfono</mat-label>
-                  <input matInput type="text" formControlName="telefono" maxlength="13" onkeypress="return event.charCode >= 48 && event.charCode <=57" required>
-                </mat-form-field>
-              </mat-grid-tile>
-              <mat-grid-tile>
-                <mat-form-field appearance="outline">
-                  <mat-label>Ocupación</mat-label>
-                  <input matInput formControlName="ocupacion">
-                </mat-form-field>
-              </mat-grid-tile>
-              <mat-grid-tile>
-                <mat-form-field appearance="outline">
-                  <mat-label>Domicilio</mat-label>
-                  <input matInput formControlName="domicilio" required>
-                </mat-form-field>
-              </mat-grid-tile>
-              <mat-grid-tile>
-                <mat-form-field appearance="outline">
-                  <mat-label>Profesión</mat-label>
-                  <input matInput formControlName="profesion">
-                </mat-form-field>
+          <div style="width: 100%;height: 680px;background-color:rgba(229, 233, 198, 0.24); border-radius: 20px;">
+            <mat-grid-list cols="2" rowHeight="75">
+          <form action="" [formGroup]="usuarioForm">
+                <mat-grid-tile colspan="2">
+                  <h2>Información</h2>
+                </mat-grid-tile>
+                <mat-grid-tile colspan="2">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Nombre</mat-label>
+                    <input matInput formControlName="nombre" required>
+                    <mat-error *ngIf="usuarioForm.controls.nombre.hasError('required')">Campo obligatorio*</mat-error>
+                  </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Cédula</mat-label>
+                    <input matInput type="text" formControlName="cedula" maxlength="10" onkeypress="return event.charCode >= 48 && event.charCode <=57" required>
+                    <mat-error *ngIf="usuarioForm.controls.cedula.hasError('required')">Campo obligatorio*</mat-error>
+                  </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Fecha nacimiento</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Teléfono</mat-label>
+                    <input matInput type="text" formControlName="telefono" maxlength="13" onkeypress="return event.charCode >= 48 && event.charCode <=57" required>
+                    <mat-error *ngIf="usuarioForm.controls.telefono.hasError('required')">Campo obligatorio*</mat-error>
+                  </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Ocupación</mat-label>
+                    <input matInput formControlName="ocupacion">
+                  </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Domicilio</mat-label>
+                    <input matInput formControlName="domicilio" required>
+                    <mat-error *ngIf="usuarioForm.controls.domicilio.hasError('required')">Campo obligatorio*</mat-error>
+                  </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Profesión</mat-label>
+                    <input matInput formControlName="profesion">
+                  </mat-form-field>
 
-              </mat-grid-tile>
-              <mat-grid-tile>
-                <mat-form-field appearance="outline">
-                  <mat-label>Correo</mat-label>
-                  <input matInput type="email" formControlName="email" required [errorStateMatcher]="matcher">
-                  <mat-error *ngIf="usuarioForm.controls.email.hasError('email')">El campo ingresado no es un correo</mat-error>
-                  <mat-error *ngIf="usuarioForm.controls.email.hasError('required')">Campo obligatorio*</mat-error>
-                </mat-form-field>
-              </mat-grid-tile>
-              <!--<mat-grid-tile>
-                <mat-form-field appearance="outline">
-                  <mat-label>Contraseña</mat-label>
-                  <input matInput type="password" placeholder="**********" formControlName="password" required>
-                  <mat-icon matSuffix>password</mat-icon>
-                  <mat-error *ngIf="usuarioForm.controls.password.hasError('required')">Campo obligatorio*</mat-error>
-                </mat-form-field>
-              </mat-grid-tile>-->
-              <mat-grid-tile>
-                <mat-form-field appearance="outline">
-                  <mat-label>Rol</mat-label>
-                  <mat-select [formControl]="rolUsuario">
-                    <mat-option value="0" disabled="true">Seleccione un rol</mat-option>
-                    <ng-container *ngFor="let rol of listaRoles">
-                      <mat-option *ngIf="rol.rolId!==3" [value]="rol.rolId" > {{rol.rolNombre}} </mat-option>
-                    </ng-container>
-                  </mat-select>
-                    <mat-error *ngIf="usuarioForm.controls.rolId.hasError('required')"></mat-error>
-                </mat-form-field>
-              </mat-grid-tile>
-              <mat-grid-tile>
-                <mat-form-field appearance="outline">
-                  <mat-label>Sede</mat-label>
-                  <mat-select [formControl]="sedeUsuario">
-                    <mat-option value="0" disabled="true">Seleccione una sede</mat-option>
-                    <ng-container *ngFor="let sede of listaSedes">
-                      <mat-option *ngIf="sede.sedeEstado" [value]="sede.sedeId">{{sede.sedeNombre}} </mat-option>
-                    </ng-container>
-                    
-                  </mat-select>
-                    <mat-error *ngIf="usuarioForm.controls.sedeId.hasError('required')"></mat-error>
-                </mat-form-field>
-              </mat-grid-tile>
-              <mat-grid-tile>
-                <mat-slide-toggle class="example-margin" color="primary" formControlName="estado" [disabled]="usuarioId==0">
-                  Estado
-                </mat-slide-toggle>
-              </mat-grid-tile>
-              <mat-grid-tile colspan="2">
-                <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
-              </mat-grid-tile>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <ng-container *ngIf="esAdministrador; else elseTemplate">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Correo</mat-label>
+                      <input matInput type="email" [value]="usuarioForm.value.email" [disabled]="esAdministrador">
+                    </mat-form-field>
+                  </ng-container>
+                  <ng-template #elseTemplate>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Correo</mat-label>
+                      <input matInput type="email" formControlName="email" required [disabled]="esAdministrador" [errorStateMatcher]="matcher">
+                      <mat-error *ngIf="usuarioForm.controls.email.hasError('email')">El campo ingresado no es un correo</mat-error>
+                      <mat-error *ngIf="usuarioForm.controls.email.hasError('required')">Campo obligatorio*</mat-error>
+                    </mat-form-field>
+                  </ng-template>
+                  
+
+                </mat-grid-tile>
+                <!--<mat-grid-tile>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Contraseña</mat-label>
+                    <input matInput type="password" placeholder="**********" formControlName="password" required>
+                    <mat-icon matSuffix>password</mat-icon>
+                    <mat-error *ngIf="usuarioForm.controls.password.hasError('required')">Campo obligatorio*</mat-error>
+                  </mat-form-field>
+                </mat-grid-tile>-->
+                <mat-grid-tile>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Rol</mat-label>
+                    <mat-select [formControl]="rolUsuario" [disabled]="esAdministrador" required>
+                      <mat-option value="0" disabled="true">Seleccione un rol</mat-option>
+                      <ng-container *ngFor="let rol of listaRoles">
+                        <mat-option [value]="rol.rolId" > {{rol.rolNombre}} </mat-option>
+                      </ng-container>
+                    </mat-select>
+                      <mat-error *ngIf="usuarioForm.controls.rolId.hasError('required')">Campo obligatorio*</mat-error>
+                  </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Sede</mat-label>
+                    <mat-select [formControl]="sedeUsuario" required>
+                      <mat-option value="0" disabled="true">Seleccione una sede</mat-option>
+                      <ng-container *ngFor="let sede of listaSedes">
+                        <mat-option *ngIf="sede.sedeEstado" [value]="sede.sedeId">{{sede.sedeNombre}} </mat-option>
+                      </ng-container>
+                    </mat-select>
+                      <mat-error *ngIf="usuarioForm.controls.sedeId.hasError('required')">Campo obligatorio*</mat-error>
+                  </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <mat-slide-toggle class="example-margin" color="primary" formControlName="estado" [disabled]="usuarioId==0 || esAdministrador">
+                    Estado
+                  </mat-slide-toggle>
+                </mat-grid-tile>
+                <mat-grid-tile colspan="2">
+                  <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
+                </mat-grid-tile>
+
             </form>
-
-          </mat-grid-list>
-        </div>
+            </mat-grid-list>
+          </div>
       </mat-grid-tile>
     </mat-grid-list>
 

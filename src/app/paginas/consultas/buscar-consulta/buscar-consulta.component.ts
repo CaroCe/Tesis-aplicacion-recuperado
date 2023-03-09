@@ -20,7 +20,7 @@ import { DialogDescargaFisioterapeutico } from '../consultas.component';
   styleUrls: ['./buscar-consulta.component.css']
 })
 export class BuscarConsultaComponent implements OnInit {
-
+  isLoadingResults:boolean=false;
   datosConsulta: Consulta={};
   datosEvolucion: Evolucion[]=[];
   usuarios: Usuario[]=[];
@@ -61,6 +61,7 @@ export class BuscarConsultaComponent implements OnInit {
   }
 
   cargarTabla(){
+    this.isLoadingResults=true;
     let filtro: FiltroConsulta={
       fechaDesde: this.formFiltro.value.fechaDesde,
       fechaHasta: this.formFiltro.value.fechaHasta,
@@ -70,6 +71,9 @@ export class BuscarConsultaComponent implements OnInit {
     this._httpConsutaService.postConsultaPorFiltros(filtro).subscribe(resp =>{
       this.dataSource= new MatTableDataSource<Consulta>();
       this.dataSource.data=resp;
+      this.isLoadingResults=false;
+    },error=>{
+      this.isLoadingResults=false;
     })
   }
 

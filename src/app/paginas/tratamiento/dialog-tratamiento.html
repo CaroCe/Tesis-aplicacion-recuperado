@@ -4,10 +4,19 @@
     </mat-card-header>
     <mat-card-content>
         <mat-selection-list #fases>
-            <mat-list-option *ngFor="let fase of fasesTratamiento" style="height: 90px;" (click)="completarFase(fase)" [selected]="fase.tratamientoCompleto" >
-                <h3>Fase {{fase.tratamientoFase}}</h3>
-                <h4>{{fase.tratamientoDescripcion}}</h4>
-            </mat-list-option>
+            <ng-container *ngFor="let fase of fasesTratamiento">
+                <mat-list-option class="p-list-option" (click)="completarFase(fase)" [selected]="fase.tratamientoCompleto" >
+                    <h3><strong>Fase: </strong>{{fase.tratamientoFase}}</h3>
+                    <h4><strong>Descripción: </strong> {{fase.tratamientoDescripcion}}</h4>
+                    <p><strong>Fecha de Inicio: </strong> {{fase.tratamientoFechaInicio}}</p>
+                    <p><strong>Recomendación: </strong> {{fase.tratamientoRecomendacion}}</p>
+                </mat-list-option>
+                    <button mat-raised-button color="accent" (click)="abrirFase(fase)">Editar Fase</button>
+                
+                
+            </ng-container>
+                
+
         </mat-selection-list>
     </mat-card-content>
     <mat-card-actions>

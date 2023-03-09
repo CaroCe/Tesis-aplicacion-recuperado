@@ -22,8 +22,9 @@ import html2canvas from 'html2canvas';
   styleUrls: ['./tratamiento.component.css']
 })
 export class TratamientoComponent implements OnInit {
+  isLoadingResults=false;
   usuarios: Usuario[]=[];
-  displayedColumns: string[] = ['fecha', 'problema', 'diagnostico', 'acciones'];
+  displayedColumns: string[] = ['fecha', 'paciente', 'problema', 'diagnostico', 'acciones'];
   dataSource = new MatTableDataSource<Consulta>();
   datosConsulta: Consulta={};
   datosTratamientos: FaseTratamiento[]=[];
@@ -59,6 +60,7 @@ export class TratamientoComponent implements OnInit {
     this.formFiltro.patchValue({fechaHasta:event.value?.getFullYear()+'-'+(Number(event.value?.getMonth())+1)+'-'+event.value?.getDate()});
   }
   cargarTabla(){
+    this.isLoadingResults=true;
     let filtro: FiltroConsulta={
       fechaDesde: this.formFiltro.value.fechaDesde,
       fechaHasta: this.formFiltro.value.fechaHasta,
@@ -68,6 +70,9 @@ export class TratamientoComponent implements OnInit {
     this._httpConsutaService.postConsultaPorFiltros(filtro).subscribe(resp =>{
       this.dataSource= new MatTableDataSource<Consulta>();
       this.dataSource.data=resp;
+      this.isLoadingResults=false;
+    },error=>{
+      this.isLoadingResults=false;
     })
   }
 
@@ -147,6 +152,17 @@ export class DialogTratamientos {
       });
     })
   }
+
+  abrirFase(fase:FaseTratamiento){
+      const dialogRef = this.dialog.open(DialogTratamientoFase, {
+        width: '1400px',
+        height: '1000px',
+        data: fase
+      });
+      dialogRef.afterClosed().subscribe(result => {
+  
+      });
+  }
 }
 
 @Component({
@@ -185,7 +201,6 @@ export class DialogDescargaTratamiento {
   descargar(){
     setTimeout(() => {
       const DATA = document.getElementById('divHtmlFisio');
-      console.log(DATA?.offsetHeight)
       const doc = new jsPDF('p', 'pt', 'a4');
       const options = {
         background: 'white',
@@ -215,7 +230,6 @@ export class DialogDescargaTratamiento {
       }).then((docResult) => {
         
         if(docResult!= undefined){
-          //this.isLoadingResults=false
           let nombre=this.data.pacienteNombre+' '+this.data.consultaFecha;
           docResult.save(`Tratamiento`+nombre+`.pdf`);
         }

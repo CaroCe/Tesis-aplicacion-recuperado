@@ -59,9 +59,6 @@ export class TratamientoCasaComponent implements OnInit {
   }
 
   cargarTratamiento(){
-      /*_httpTratamientoService.getTratamientoId(1).subscribe(resp=>{
-        this.datosTratamiento=resp;
-      });*/
     this._httpTratamientoService.getTratamientosPorUsuario(Number(this.pacienteId.value)).subscribe(resp=>{
         this.listaTratamientos=resp
       })
@@ -129,7 +126,6 @@ export class DialogTratamientoCasa {
     protected _sanitizer: DomSanitizer,
     private formBuilder: FormBuilder,
     private _httpTratamientoService:TratamientoService) {
-      console.log(data)
 
   }
 
@@ -192,7 +188,6 @@ export class SafePipe implements PipeTransform {
   }
 
   transform(url:any):SafeUrl {
-    console.log(url)
     return this._sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 }

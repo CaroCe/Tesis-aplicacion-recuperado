@@ -15,8 +15,8 @@ export interface EjercicioTratamiento {
     ejercicioEstado:                    number;
     ejercicioDescanso:                  number;
     ejercicioObservacion:               string;
-    ejercicio:                          string;
     tratamientoDia:                     number;
+    ejercicio:                         Ejercicio;
    
 }
 

@@ -15,16 +15,17 @@ import { CitasService } from '../citas.service';
 import { CitaPost, FiltroCitas, HorarioCita, HorarioDisponibleCita } from '../horario-cita';
 import { environment } from '../../../../environments/environment';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { UsuariosService } from 'src/app/servicios/usuarios.service';
+import { Router } from '@angular/router';
 @Injectable()
 export class FiveDayRangeSelectionStrategy<D> implements MatDateRangeSelectionStrategy<D>, OnInit {
   
 
   constructor(private _dateAdapter: DateAdapter<D>) {
-    
-   
-   }
 
-   ngOnInit(): void {
+  }
+
+  ngOnInit(): void {
     
   }
 
@@ -73,7 +74,23 @@ export class AgendarCitaComponent implements OnInit {
   private urlService: string = environment.apiUrl+'mensajehub';
   private connection: HubConnection;
 
-  constructor(private dialog:MatDialog,private fb: FormBuilder,private _httpCitas:CitasService,private _httpEspecialistaService: EspecialistaService, private _httpSedeService: SedesService) {
+  constructor(
+    private dialog:MatDialog,
+    private fb: FormBuilder,
+    private _httpCitas:CitasService,
+    private _httpEspecialistaService: EspecialistaService, 
+    private _httpSedeService: SedesService,
+    private _httpUsuarioService: UsuariosService,
+    private _router: Router,
+    ) {
+      
+    let usuarioId=Number(localStorage.getItem('userId'));
+    this._httpUsuarioService.getUsuarioId(usuarioId).subscribe(resp=>{
+      if(resp.rolId==3){
+        this._router.navigateByUrl('/citas/agendar-cita-admin');
+      }
+
+    });
     this.connection = new HubConnectionBuilder()
       .withUrl(this.urlService)
       .build();
@@ -96,11 +113,12 @@ export class AgendarCitaComponent implements OnInit {
   ngOnInit(): void {
     this.connection.start()
       .then(_ => {
-        console.log('Connection Started');
       }).catch(error => {
         return console.error(error);
       });
+
   }
+
   public sendMessage() {
     this.connection.invoke('SendMessage', this.messageToSend)
       .then(_ =>{
@@ -112,7 +130,6 @@ export class AgendarCitaComponent implements OnInit {
   }
 
   private newMessage(message: string) {
-    console.log(message);
     this.conversation.push(message);
   }
   buscar(){
@@ -165,9 +182,7 @@ export class AgendarCitaComponent implements OnInit {
     let bloqueado: boolean=false;
     let hora=tiempo.split(':');
     let horaActual=Number(this.fecha.getHours());
-    console.log(horaActual,hora[0])
     if(horaActual >= Number(hora[0])){
-      console.log('bloqueado')
       bloqueado=true;
     }
     return bloqueado;
@@ -192,7 +207,7 @@ export class AgendarCitaComponent implements OnInit {
 })
 export class DialogAgendarCita {
   observacion = new FormControl();
-  
+  isLoadingResults:boolean=false;
   respuesta = new EventEmitter();
   constructor(public dialogRef: MatDialogRef<DialogAgendarCita>,
     @Inject(MAT_DIALOG_DATA) public data: CitaPost,
@@ -202,7 +217,7 @@ export class DialogAgendarCita {
   onSubmit(data: any) {
   }
   agendar(){
-
+    this.isLoadingResults=true;
     let cita:CitaPost = {
       citaEstado:1,
       citaFecha:this.data.citaFecha,
@@ -213,7 +228,7 @@ export class DialogAgendarCita {
       citaObservacion: this.observacion.value
     }
     this._httpCita.postCita(cita).subscribe(c=>{
-      
+      this.isLoadingResults=false;
       const dialogRef = this.dialog.open(DialogGeneral, {
         width: '400px',
         data: {
@@ -223,6 +238,8 @@ export class DialogAgendarCita {
       dialogRef.afterClosed().subscribe(result => {
         this.dialogRef.close();
       }); 
+    },error=>{
+      this.isLoadingResults=false;
     });
     
   }

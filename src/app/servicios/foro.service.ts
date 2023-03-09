@@ -35,7 +35,6 @@ export class ForoService {
     return this.http.post<any>(this.urlService+"/ComentarioForo/",datos,headerOauth)
   }
   putForo(datos: Foro,id: number):Observable<any>{
-    console.log(JSON.stringify(datos));
     return this.http.put(this.urlService+'/'+id,datos,headerOauth); 
   };
 

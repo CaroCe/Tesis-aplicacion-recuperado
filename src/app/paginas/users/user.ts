@@ -1,7 +1,7 @@
 
 export interface Usuario {
     usuarioId:              number;
-    lateralidadId:          number;
+    lateralidadId:          number | null;
     rolId:                  number;
     sedeId:                 number;
     usuarioNombre:          string;

@@ -33,7 +33,6 @@ export class DialogVistaConsultaComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    console.log(this.data.consultaImagen?.indexOf('data'))
     if(this.data.consultaImagen?.indexOf('data')===-1){
       this.cardImageBase64 =  this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${this.data.consultaImagen}`);
     }else{  
@@ -78,7 +77,6 @@ export class DialogVistaConsultaComponent implements OnInit {
   }
 
   editarFase(datos: FaseTratamiento){
-    //this._httpTratamientoService.getTratamientoId(datos.tratamientoId).subscribe(resp=>{
       const dialogRef = this.dialog.open(DialogTratamientoFase, {
         width: '500px',
         height:'430px',
@@ -87,11 +85,9 @@ export class DialogVistaConsultaComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         this.cargarFases()
       }); 
-    //});
   }
 
   uploadFile() {
-    console.log(this.fileInput.nativeElement);
     let formData = new FormData();
     formData.append('imagen', this.fileInput.nativeElement.files[0]);
 

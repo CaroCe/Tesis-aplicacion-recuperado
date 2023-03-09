@@ -24,13 +24,11 @@ export class ChatComponent implements OnInit {
       .withUrl(this.urlService)
       .build();
       this.connection.on("grupo1", message => this.newMessage(message));
-    //this.connection.on("grupo3", message => this.newMessage(message));
   }
 
   ngOnInit(): void {
     this.connection.start()
       .then(_ => {
-        console.log('Connection Started');
       }).catch(error => {
         return console.error(error);
       });
@@ -46,7 +44,6 @@ export class ChatComponent implements OnInit {
   }
 
   private newMessage(message: string) {
-    console.log(message);
     this.conversation.push(message);
   }
 

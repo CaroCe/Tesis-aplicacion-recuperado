@@ -48,6 +48,8 @@ export class FiveDayRangeSelectionStrategy<D> implements MatDateRangeSelectionSt
   ],
 })
 export class AgendarCitaAdminComponent implements OnInit {
+  
+  isLoadingResults:boolean=false;
   todayDate:Date = new Date();
   displayedColumns: string[] = ['fecha1', 'fecha2', 'fecha3', 'fecha4', 'fecha5'];
   dataSource:HorarioDisponibleCita[] = [];
@@ -81,11 +83,9 @@ export class AgendarCitaAdminComponent implements OnInit {
     _httpUsuarioService.getUsuarios().subscribe(pac=>{
       this.listaPacientes = pac;
     });
-    console.log(this.fecha)
   }
 
   ngOnInit(): void {
-    console.log(this.fecha.getHours())
   }
 
   filtrarPacientes(event:any){
@@ -93,6 +93,7 @@ export class AgendarCitaAdminComponent implements OnInit {
   }
 
   buscar(){
+    this.isLoadingResults=true;
     if(this.filtroForm.value.sedeId > 0){
       if(this.filtroForm.value.pacienteId>0){
         let filtro: FiltroCitas ={
@@ -103,19 +104,23 @@ export class AgendarCitaAdminComponent implements OnInit {
         }
         this._httpCitas.getHorariosDisponibles(filtro).subscribe(c=>{
           this.dataSource = c;
+          this.isLoadingResults=false;
+        },error=>{
+          this.isLoadingResults=false;
         });
       }else{
+        this.isLoadingResults=false;
         alert("Seleccione un paciente");
       }
     }
     else{
+        this.isLoadingResults=false;
       alert("Seleccione una sede");
     }
     
   }
 
   agendarCita(dia:HorarioDisponibleCita,hora:HorarioCita){
-
     let datosCita: CitaPost={
       diaId:dia.horarioDiaId,
       citaEstado:1,
@@ -144,17 +149,20 @@ export class AgendarCitaAdminComponent implements OnInit {
     return horaFin;
   }
 
-  bloquearHora(tiempo:string){
-
-    
+  bloquearHora(horario:HorarioDisponibleCita,tiempo:string){
+    let fechaActual=new Date();
+    fechaActual.setHours(0,0,0,0);
+    let fechaHorario=new Date(horario.horarioDiaFecha);
+    fechaHorario.setHours(0,0,0,0);
     let bloqueado: boolean=false;
-    let hora=tiempo.split(':');
-    let horaActual=Number(this.fecha.getHours());
-    console.log(horaActual,hora[0])
-    if(horaActual >= Number(hora[0])){
-      console.log('bloqueado')
-      bloqueado=true;
+    if(fechaActual == fechaHorario){
+      let hora=tiempo.split(':');
+      let horaActual=Number(this.fecha.getHours());
+      if(horaActual >= Number(hora[0])){
+        bloqueado=true;
+      }
     }
+
     return bloqueado;
   }
 
@@ -172,6 +180,7 @@ export class AgendarCitaAdminComponent implements OnInit {
   templateUrl: 'dialog-agendar-cita-admin.html'
 })
 export class DialogAgendarCitaAdmin {
+  isLoadingResults:boolean=false;
   observacion = new FormControl();
   constructor(public dialogRef: MatDialogRef<DialogAgendarCitaAdmin>,
     @Inject(MAT_DIALOG_DATA) public data: CitaPost,
@@ -182,7 +191,7 @@ export class DialogAgendarCitaAdmin {
   onSubmit(data: any) {
   }
   agendar(){
-
+    this.isLoadingResults=true;
     let cita:CitaPost = {
       citaEstado:1,
       citaFecha:this.data.citaFecha,
@@ -193,7 +202,7 @@ export class DialogAgendarCitaAdmin {
       citaObservacion: this.observacion.value
     }
     this._httpCita.postCita(cita).subscribe(c=>{
-      
+      this.isLoadingResults=false;
       const dialogRef = this.dialog.open(DialogGeneral, {
         width: '400px',
         data: {
@@ -203,6 +212,8 @@ export class DialogAgendarCitaAdmin {
       dialogRef.afterClosed().subscribe(result => {
         this.dialogRef.close();
       }); 
+    },error=>{
+      this.isLoadingResults=false;
     });
     
   }

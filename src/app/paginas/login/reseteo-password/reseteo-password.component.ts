@@ -92,8 +92,7 @@ export class ReseteoPasswordComponent implements OnInit {
   }
 
   enviarCodigo(){
-   this.codigo=Math.floor((Math.random() * (999999 - 100000 + 1)) + 100000);;
-    console.log(this.codigo);
+   this.codigo=Math.floor((Math.random() * (999999 - 100000 + 1)) + 100000);
     let emailUsuario:string=this.formCodigo.value.email?this.formCodigo.value.email.toString():'';
     this.http.getValidarEmail(emailUsuario).subscribe(resp=>{
       if(resp){
@@ -107,7 +106,6 @@ export class ReseteoPasswordComponent implements OnInit {
           this.envioCodigo=false;
           this.verificacionCodigo=true;
           this.myTimeout=setTimeout(() => {
-            console.log('se termino el tiempo');
             this._router.navigate(['/login']);
           }, 360000);
         },error=>{
@@ -128,7 +126,6 @@ export class ReseteoPasswordComponent implements OnInit {
   verificarCodigo(){
     if(Number(this.formVerificacion.value.codigo)==this.codigo){
       clearTimeout(this.myTimeout);
-      console.log('limpiar timer')
       this.verificacionCodigo=false;
       this.reseteoCodigo=true;
     }else{
