@@ -3,16 +3,16 @@ import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ConsultasService } from '../../servicios/consulta.service';
 
-import { Usuario } from '../users/user';
+import { Usuario } from '../administracion/users/user';
 import { MatTableDataSource } from '@angular/material/table';
-import { Consulta } from '../consultas/consulta';
+import { Consulta } from '../historia-clinica/consultas/consulta';
 import { UsuariosService } from 'src/app/servicios/usuarios.service';
 import { EjercicioTratamiento, FaseTratamiento } from './tratamiento';
-import { DialogTratamientoFase } from '../consultas/consultas.component';
+import { DialogTratamientoFase } from '../historia-clinica/consultas/consultas.component';
 import { TratamientoService } from '../../servicios/tratamiento.service';
-import { DialogGeneral } from '../dialog-general/dialog-general';
+import { DialogGeneral } from '../../componentes/dialog-general/dialog-general';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
-import { FiltroConsulta } from '../consultas/buscar-consulta/buscar-consulta';
+import { FiltroConsulta } from '../historia-clinica/buscar-consulta/buscar-consulta';
 import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
 
@@ -92,7 +92,6 @@ export class TratamientoComponent implements OnInit {
   abrirDescarga(element:Consulta){
     const dialogRef = this.dialog.open(DialogDescargaTratamiento,{
       width: '1400px',
-      height:'1000px',
       data: element
     })
   }
@@ -170,6 +169,8 @@ export class DialogTratamientos {
   templateUrl: './dialog-descarga-tratamiento.html'
 })
 export class DialogDescargaTratamiento {
+  
+  isLoadingResults:boolean=false;
   datosConsulta: Consulta={};
   datosTratamientos: FaseTratamiento[]=[];
   nombrePaciente: string="";
@@ -199,7 +200,7 @@ export class DialogDescargaTratamiento {
   }
 
   descargar(){
-    setTimeout(() => {
+    this.isLoadingResults=true;
       const DATA = document.getElementById('divHtmlFisio');
       const doc = new jsPDF('p', 'pt', 'a4');
       const options = {
@@ -233,12 +234,10 @@ export class DialogDescargaTratamiento {
           let nombre=this.data.pacienteNombre+' '+this.data.consultaFecha;
           docResult.save(`Tratamiento`+nombre+`.pdf`);
         }
-
+        this.isLoadingResults=false;
       }).catch(error=>{
-        
+        this.isLoadingResults=false;
       });
-      
-    }, 500);
   }
 
   formatoFecha(date:Date): string{

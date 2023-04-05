@@ -19,9 +19,10 @@ export class MisCitasComponent implements OnInit {
     
     this.usuarioId=Number(localStorage.getItem("userId"))
     this._httpUsuarioService.getUsuarioId(this.usuarioId).subscribe(resp=>{
-      this.rolId=resp.rolId;      
+      this.rolId=resp.rolId; 
+      console.log(this.rolId)
+      this.buscarCitas();
     });
-    this.buscarCitas();
   }
 
   ngOnInit(): void {
@@ -29,8 +30,8 @@ export class MisCitasComponent implements OnInit {
 
   buscarCitas(){
     let filtro = {
-      fechaDesde: "2021-01-01",
-      fechaHasta: "2050-12-31",
+      fechaDesde: new Date(),
+      fechaHasta: new Date(),
       especialistaId:0,
       pacienteId:0,
       estado:5

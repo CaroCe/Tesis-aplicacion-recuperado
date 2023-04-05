@@ -5,7 +5,11 @@
   "projects": {
     "tesis-caroce": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -13,6 +17,12 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "lodash", "rxjs-compat","hammerjs","rgbcolor","html2canvas","raf","core-js/modules/web.dom-collections.iterator.js","core-js/modules/es.string.trim.js",
+              "core-js/modules/es.string.starts-with.js","core-js/modules/es.string.split.js","core-js/modules/es.string.replace.js","core-js/modules/es.string.match.js",
+              "core-js/modules/es.string.includes.js","core-js/modules/es.string.ends-with.js","core-js/modules/es.regexp.to-string.js","core-js/modules/es.promise.js",
+              "core-js/modules/es.array.reverse.js","core-js/modules/es.array.reduce.js","core-js/modules/es.array.iterator.js","core-js/modules/es.array.index-of.js"
+           ],
             "outputPath": "dist/tesis-caroce",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -39,7 +49,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "5mb",
-                  "maximumError": "10mb"
+                  "maximumError": "5mb"
                 }
               ],
               "fileReplacements": [
@@ -51,12 +61,12 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
+              "buildOptimizer": true,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
+              "sourceMap": false,
+              "namedChunks": false,
+              "vendorChunk": false
             }
           },
           "defaultConfiguration": "production"

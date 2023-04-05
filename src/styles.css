@@ -60,3 +60,23 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .text-right{
   text-align: right;
 }
+
+.img-login {
+  background-image: url(assets/fondo_fisio.png);background-size: contain;
+}
+
+.grid-login{
+  background-image: linear-gradient(#211966,#c7eb2686); 
+  opacity: 85%;
+}
+
+.m-xs-login{
+  margin: 5%;font-size: x-small;color: white;opacity: 100%;
+}
+
+.b-white{
+  background-color: white;
+}
+.t-c-m-p-login{
+  text-align: center;margin: 7%;padding: 4%;
+}

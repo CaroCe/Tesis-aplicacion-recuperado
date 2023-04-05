@@ -1,4 +1,4 @@
-import { Ejercicio } from '../admin-ejercicios/ejercicio';
+import { Ejercicio } from '../administracion/admin-ejercicios/ejercicio';
 export interface FaseTratamiento {
     tratamientoId:            number;
     consultaId:               number;

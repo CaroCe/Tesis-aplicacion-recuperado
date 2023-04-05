@@ -75,7 +75,7 @@ export class ReseteoPasswordComponent implements OnInit {
 
   resetear(){
     let datos:Login={
-      email:this.formReg.value.email?this.formReg.value.email.toString():'',
+      email:this.formCodigo.value.email?this.formCodigo.value.email.toString():'',
       password: this.formReg.value.password?this.formReg.value.password.toString():''
     }
     this.http.getResetearPassword(datos).subscribe(resp=>{

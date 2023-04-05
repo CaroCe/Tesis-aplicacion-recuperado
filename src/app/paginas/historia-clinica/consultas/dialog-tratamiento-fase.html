@@ -1,0 +1,70 @@
+<div class="loading-page"
+       *ngIf="isLoadingResults">
+    <mat-spinner></mat-spinner>
+</div>
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Fase {{form.value.fase}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-grid-list cols="2" rowHeight="100">
+            <form [formGroup]="form">
+                <mat-grid-tile colspan="2">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Fase</mat-label>
+                        <input matInput type="text" formControlName = "fase" required>
+                        <mat-error *ngIf="form.controls.fase.hasError('required')" >Campo Obligatorio *</mat-error>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Días</mat-label>
+                        <input matInput #diaInput type="number" min="0" formControlName = "dias" (change)="generarDias()" required [readonly]="data.tratamientoId!==0">
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Fecha inicio</mat-label>
+                        <input matInput #fechaInput [matDatepicker]="picker" formControlName = "fechaInicio" (dateInput)="generarDias()" (dateChange)="generarDias()" [readonly]="data.tratamientoId!==0">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile colspan="2">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Descripción</mat-label>
+                        <input matInput  formControlName = "descripcion">
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile colspan="2">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Observación</mat-label>
+                        <textarea matInput formControlName = "observacion"></textarea>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile colspan="2">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Recomendación</mat-label>
+                        <textarea matInput formControlName = "recomendacion"></textarea>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile style="text-align: right;">
+                    <button mat-raised-button color="primary" (click)="guardarFase()">Guardar</button>
+                </mat-grid-tile>
+            </form>
+            
+        </mat-grid-list>
+
+        <mat-grid-list cols="4" rowHeight="600"style="overflow: scroll;">
+                <mat-grid-tile *ngFor="let item of listaDias">
+                    <mat-list style="padding: 15px;height: 100%;" style="overflow: scroll;">
+                        <h3>{{item.fecha}}</h3>
+                        <mat-list-item style="background-color: rgba(0, 0, 255, 0.171);margin: 10px 0" *ngFor="let subItem of item.ejercicioTratamientos" (click)="editarEjercicioTratamiento(subItem)">
+                            {{subItem.ejercicio?.ejercicioNombre}}
+                        </mat-list-item>
+                        <button mat-raised-button color="accent" (click)="agregarEjercicio(item)">Agregar</button>
+                    </mat-list>
+                </mat-grid-tile>
+        </mat-grid-list>
+    </mat-card-content>
+</mat-card>

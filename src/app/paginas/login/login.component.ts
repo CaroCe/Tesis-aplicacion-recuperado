@@ -19,20 +19,13 @@ import { ErrorStateMatcher } from '@angular/material/core';
 })
 export class LoginComponent implements OnInit {
   loginForm:boolean = true;
-  username: string = "";
-  password: string = "";
-  mensaje = false;
-  ngVersion: string = VERSION.full;
-  matVersion: string = '5.1.0';
   breakpoint: number = 0;
   alturaFila: string = '100%';
   numeroFilas: number = 1;
   alineacionLogo: string = "";
   alineacionFormulario: string = "";
-  imagen: string = environment.logoName;
   nombreEmpresa: string = environment.tituloApp;
   isLoadingResults = false;
-  controlEmail=new FormControl('',[Validators.email,Validators.required])
   matcher = new MyErrorStateMatcher();
   formLogin = new FormGroup(
     {

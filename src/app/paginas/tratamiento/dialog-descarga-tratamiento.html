@@ -1,4 +1,8 @@
-
+<div class="loading-page"
+       *ngIf="isLoadingResults">
+    <mat-spinner></mat-spinner>
+</div>
+<div mat-dialog-content>
         <div id="divHtmlFisio" style="padding: 40px;width: 1000px;">
             <div style="float:left;margin-bottom:30px;width:20%;text-align: center;">
                 <img id="logoTrading" src="assets/fisioblack.png" width="75%">
@@ -88,3 +92,9 @@
                 </div>
             </div>
         </div>
+
+</div>
+
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" style="margin: 5px;" (click)="descargar()">Descargar</button>
+</div>

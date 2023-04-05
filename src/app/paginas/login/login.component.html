@@ -1,23 +1,17 @@
-<div class="example-loading-shade" *ngIf="isLoadingResults">
-  <div style="height: 220px;width: 200px;align-items: center;   justify-content: center;">
-    <div style="width: 200px;height: 180px;">
-      <img src="assets/logo-ff.png" width="200">
-    </div>
-    <div style="width: 200px; align-items: center;   justify-content: center;display: flex;">
-      <mat-spinner diameter="20" strokeWidth="10" color="accent"></mat-spinner>
-    </div>
-  </div>
+<div class="loading-page"
+       *ngIf="isLoadingResults">
+    <mat-spinner></mat-spinner>
 </div>
 <mat-grid-list [cols]="breakpoint" [rowHeight]="alturaFila" (window:resize)="onResize($event)"
-  style="background-image: url(assets/fondo_fisio.png);background-size: contain;">
-  <mat-grid-tile style="background-image: linear-gradient(#211966,#c7eb2686); opacity: 85%;">
+  class="img-login">
+  <mat-grid-tile class="grid-login">
     <div style="width: 100%;">
-      <div [ngStyle]="{'text-align': alineacionLogo}" style="margin: 5%;font-size: x-small;color: white;opacity: 100%;">
+      <div [ngStyle]="{'text-align': alineacionLogo}" class="m-xs-login">
         <a href="http://floresfisioterapia.com/" target="_blank">
           <img src="assets/logo-ff.png" width="250">
         </a>
         <br>
-        <a href="http://floresfisioterapia.com/" target="_blank" style="color: white;">
+        <a href="http://floresfisioterapia.com/" target="_blank" class="b-white">
           floresfisioterapia.com
         </a>
       </div>
@@ -25,9 +19,9 @@
 
 
   </mat-grid-tile>
-  <mat-grid-tile [rowspan]="numeroFilas" style="background-color: white;">
+  <mat-grid-tile [rowspan]="numeroFilas" class="b-white">
     <div [ngStyle]="{'text-align': 'left'}" style="width: 100%;">
-      <mat-card class="mat-elevation-z8 card" style="text-align: center;margin: 7%;padding: 4%;">
+      <mat-card class="mat-elevation-z8 card" class="t-c-m-p-login">
         <mat-card-header>
           <div style="width: 100%;">
             <h2 style="text-align: left;">{{nombreEmpresa}}</h2>

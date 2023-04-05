@@ -6,11 +6,11 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { EspecialistaService } from 'src/app/servicios/especialista.service';
 import { RolesService } from 'src/app/servicios/roles.service';
 import { SedesService } from 'src/app/servicios/sedes.service';
-import { Sede } from '../../admin-sedes/sede';
-import { DialogGeneral } from '../../dialog-general/dialog-general';
-import { HorarioDia } from '../../horario-especialista/horario-especialista';
-import { Rol } from '../../users/rol';
-import { Usuario } from '../../users/user';
+import { Sede } from '../../administracion/admin-sedes/sede';
+import { DialogGeneral } from '../../../componentes/dialog-general/dialog-general';
+import { HorarioDia } from '../../administracion/horario-especialista/horario-especialista';
+import { Rol } from '../../administracion/users/rol';
+import { Usuario } from '../../administracion/users/user';
 import { CitasService } from '../citas.service';
 import { CitaPost, FiltroCitas, HorarioCita, HorarioDisponibleCita } from '../horario-cita';
 import { environment } from '../../../../environments/environment';
@@ -178,13 +178,18 @@ export class AgendarCitaComponent implements OnInit {
 
     return horaFin;
   }
-  bloquearHora(tiempo:string){
+  bloquearHora(horario:HorarioDisponibleCita, tiempo:string){
     let bloqueado: boolean=false;
-    let hora=tiempo.split(':');
-    let horaActual=Number(this.fecha.getHours());
-    if(horaActual >= Number(hora[0])){
-      bloqueado=true;
+    let fechaHorario=new Date(horario.horarioDiaFecha).setHours(0,0,0,0);
+    let fechaActual= new Date().setHours(0,0,0,0);
+    if(fechaHorario==fechaActual){
+      let hora=tiempo.split(':');
+      let horaActual=Number(this.fecha.getHours());
+      if(horaActual >= Number(hora[0])){
+        bloqueado=true;
+      }
     }
+    
     return bloqueado;
   }
 

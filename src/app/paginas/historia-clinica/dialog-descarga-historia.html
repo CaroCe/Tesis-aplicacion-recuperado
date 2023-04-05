@@ -85,10 +85,10 @@
               </table>
             </div>
             
-            <div style="width: 100%;margin-bottom: 10px;font-size:16px">
-              <strong >Problemas de salud</strong>
-            </div>
             <div *ngFor="let consulta of listaConsultas">
+              <div style="width: 100%;margin-bottom: 10px;margin-top:10px;font-size:16px">
+                <strong >Problemas de salud: </strong> {{consulta.consultaProblema}}
+              </div>
                 <div style="width: 100%;margin-bottom: 30px;">  
                     <table style="border: 2px solid grey;border-collapse: collapse;">
                         <tbody>

@@ -14,7 +14,9 @@ import { map, switchMap, take } from 'rxjs/operators';
 
 import { AuthService } from './auth.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root' // ADDED providedIn root here.
+})
 export class AuthGuard implements CanActivate {
   constructor(
     private _authService: AuthService,

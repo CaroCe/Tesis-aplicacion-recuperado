@@ -1,13 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
-import { FiltroConsulta } from '../consultas/buscar-consulta/buscar-consulta';
+import { FiltroConsulta } from '../historia-clinica/buscar-consulta/buscar-consulta';
 import { ConsultasService } from '../../servicios/consulta.service';
-import { Consulta } from '../consultas/consulta';
+import { Consulta } from '../historia-clinica/consultas/consulta';
 import { TratamientoService } from '../../servicios/tratamiento.service';
 import { FaseTratamiento } from '../tratamiento/tratamiento';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { comentarioForo, filtroForo, Foro } from './foro.interface';
-import { Usuario } from '../users/user';
+import { Usuario } from '../administracion/users/user';
 import { environment } from '../../../environments/environment';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ForoService } from '../../servicios/foro.service';

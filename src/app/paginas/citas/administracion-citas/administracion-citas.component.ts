@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { EspecialistaService } from 'src/app/servicios/especialista.service';
-import { Usuario } from '../../users/user';
+import { Usuario } from '../../administracion/users/user';
 import { CitasService } from '../citas.service';
 import { CitaAdmin } from '../mis-citas/citas';
 import { UserService } from '../../login/user.service';
@@ -10,8 +10,8 @@ import { Correo } from '../../login/login.interface';
 import { environment } from '../../../../environments/environment.prod';
 import { LoginService } from '../../login/login.service';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogGeneral } from '../../dialog-general/dialog-general';
-import { DialogError } from '../../dialog-general-error/dialog-error';
+import { DialogGeneral } from '../../../componentes/dialog-general/dialog-general';
+import { DialogError } from '../../../componentes/dialog-general-error/dialog-error';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 
 @Component({
@@ -116,7 +116,7 @@ export class AdministracionCitasComponent implements OnInit {
       "correo": 'carito.kt1995@gmail.com',
       "correo_trading":environment.emailEmpresa,
       "asunto":"Recordatorio de Cita",
-      "body":"<div style='width:80%;padding:10px'><h2>Recordatorio</h2></div><div style='padding: 10px;background: #f3f3f3;border: 1px solid #d6d5d5;text-align:center'><p> Usted tiene una cita pendiente el día: <strong>"+cita.fecha+"</strong> a la hora: <strong>"+cita.hora+"</strong></p><br><p>Por favor confirme su cita o caso contrario cancele la cita para reagendar proximamente.</p><p>Para confirmar puede ingresar al sistema <a href='https://fisioflores.fsdev.link'>https://fisioflores.fsdev.link/</a></a></p></div></div>"
+      "body":"<div style='width:80%;padding:10px'><h2>Recordatorio</h2></div><div style='padding: 10px;background: #f3f3f3;border: 1px solid #d6d5d5;text-align:center'><p> Usted tiene una cita pendiente el día: <strong>"+cita.fecha+"</strong> a la hora: <strong>"+cita.hora+"</strong></p><br><p>Por favor confirme su cita o caso contrario cancele la cita para reagendar proximamente.</p><p>Para confirmar puede ingresar al sistema <a href='http://fisioflores.fsdev.link/'>http://fisioflores.fsdev.link/</a></a></p></div></div>"
     }
     this.http.postEnviarCodigo(correo).subscribe(resp=>{
       this.isLoadingResults=false;
